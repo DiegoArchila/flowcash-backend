@@ -44,7 +44,7 @@ module.exports=(sequelize, DataTypes) =>{
 
     //Relationship
     operation_type.associations= function(models) {
-        operation_type.hasMany(models.Operation,{
+        operation_type.hasMany(models.operation,{
             foreignKey: "operation_type_id",
             as: "operations"
         })

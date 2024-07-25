@@ -1,9 +1,7 @@
 const { ValidationError } = require("sequelize");
 const db = require("../../database/models");
 
-
 const operationTypeServices={};
-
 
 
 /**
@@ -116,7 +114,7 @@ operationTypeServices.getAlls=async(page, count) => {
         );
 
     } else {
-        results = await db.operation_type.findAll();
+        results = await db.operation_type.findAndCountAll();
         return {
             data: results
         }

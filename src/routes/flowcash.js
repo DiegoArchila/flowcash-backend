@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const controllerOperationType = require("../controllers/flowcash/operation_type");
+const controllerOperation = require("../controllers/flowcash/operation");
+
 
 /**
  * The path is same the of the file .js:
@@ -32,6 +34,10 @@ router
     /**
     * PATHS for /flowcash/operations
     */
-    .post("/operation/create", controllerOperationType.create)
+    .post("/operation/create", controllerOperation.create)
+    .post("/operation/:id/update", controllerOperation.update)
+    .delete("/operation/:id/delete", controllerOperation.delete)
+    .get("/operation/:id", controllerOperation.findById)
+    .get("/operation", controllerOperation.getAlls)
 
 module.exports=router;

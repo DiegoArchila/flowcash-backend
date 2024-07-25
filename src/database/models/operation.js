@@ -7,7 +7,7 @@
 module.exports=(sequelize, DataTypes) =>{
 
     //Set the Alias
-    const alias = "Operation";
+    const alias = "operation";
 
     //Sets Columns
     const Columns = {
@@ -43,7 +43,7 @@ module.exports=(sequelize, DataTypes) =>{
     //Relationship
     operation.associations= function(models) {
         
-        operation.belongsTo(models.Operation_type,{
+        operation.belongsTo(models.operation_type,{
             as: "type_operation"
         });
 
@@ -51,5 +51,9 @@ module.exports=(sequelize, DataTypes) =>{
             foreignKey:"operation_id",
             as: "operations_flowcash"
         });
-    }
+    };
+
+    return operation;
+
+    
 }

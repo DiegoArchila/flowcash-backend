@@ -1,4 +1,3 @@
-const operationTypeServices = require("../../services/flowcash/operation_type");
 const servicesOperationType = require("../../services/flowcash/operation_type");
 const { ValidationError, ForeignKeyConstraintError } = require("sequelize");
 
@@ -43,7 +42,7 @@ controllerOperationType.update=async(req,res)=>{
 
         return res.status(200).json({
             message:`the register \"${req.params.id}\" has updated`
-        })
+        });
         
     } catch (error) {
         console.error(error);
@@ -115,7 +114,7 @@ controllerOperationType.findById=async(req,res)=>{
         });   
     } catch (error) {
         console.error(
-            "An error is found while the system try delete a operation_type field: \n", 
+            "An error is found while the system try find a operation_type field: \n", 
             error
         );
 
@@ -127,7 +126,7 @@ controllerOperationType.findById=async(req,res)=>{
 
         return res.status(500).json({
             error:error.message
-        })
+        });
     }
 }
 
@@ -140,7 +139,7 @@ controllerOperationType.findById=async(req,res)=>{
 controllerOperationType.getAlls=async(req,res)=>{
     try {
 
-        const results = await operationTypeServices.getAlls(
+        const results = await servicesOperationType.getAlls(
             req.query?.page,
             req.query?.count
         );
