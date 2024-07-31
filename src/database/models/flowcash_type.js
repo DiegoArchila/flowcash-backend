@@ -7,7 +7,7 @@
 module.exports=(sequelize, DataTypes) =>{
 
     //Set the Alias
-    const alias = "Flowcash_type";
+    const alias = "flowcash_type";
 
     //Sets Columns
     const Columns = {
@@ -38,25 +38,26 @@ module.exports=(sequelize, DataTypes) =>{
 
     // Set configurations from model or table
     const config={
-        tableName: "flowcash_type"
+        tableName: "flowcash_type",
+        timestamps: false
     }
 
     // Assignation
-    const Flowcash_type= sequelize.define(alias, Columns, config);
+    const flowcash_type= sequelize.define(alias, Columns, config);
 
     //Relationship
-    Flowcash_type.associations= function(models) {
+    flowcash_type.associations= function(models) {
         
-        Flowcash_type.hasMany(models.Flowcash,{
+        flowcash_type.hasMany(models.Flowcash,{
             foreignKey: "flowcash_type_id",
             as: "flowcash_types"
         });
 
-        Flowcash_type.hasMany(models.Balance_daily,{
+        flowcash_type.hasMany(models.Balance_daily,{
             foreignKey: "flowcash_type_id",
             as: "flowcash_balances_dailies"
         })
     };
 
-    return Flowcash_type;
+    return flowcash_type;
 }
