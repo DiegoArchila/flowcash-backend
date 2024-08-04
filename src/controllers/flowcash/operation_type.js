@@ -38,7 +38,7 @@ controllerOperationType.create=async(req, res)=>{
 controllerOperationType.update=async(req,res)=>{
     try {
         
-        const updated=await servicesOperationType.update(req.body.updateOperationType, req.params.id);
+        const updated=await servicesOperationType.update(req.body.updateOperationType, Number.parseInt(req.params.id));
 
         return res.status(200).json({
             message:`the register \"${req.params.id}\" has updated`
@@ -69,7 +69,7 @@ controllerOperationType.delete=async(req,res)=>{
 
     try {
 
-        await servicesOperationType.delete(req.params.id);
+        await servicesOperationType.delete(Number.parseInt(req.params.id));
 
         return res.status(200).json({
             message:`the register ${req.params.id} it was deleted successfuly`
@@ -108,7 +108,7 @@ controllerOperationType.delete=async(req,res)=>{
 controllerOperationType.findById=async(req,res)=>{
     
     try {
-        const found = await servicesOperationType.findById(req.params.id);
+        const found = await servicesOperationType.findById(Number.parseInt(req.params.id));
         return res.status(200).json({
             data:found
         });   
@@ -140,8 +140,8 @@ controllerOperationType.getAlls=async(req,res)=>{
     try {
 
         const results = await servicesOperationType.getAlls(
-            req.query?.page,
-            req.query?.count
+            Number.parseInt(req.query?.page),
+            Number.parseInt(req.query?.count)
         );
 
         return res.status(200).json(results);

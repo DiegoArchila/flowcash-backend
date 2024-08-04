@@ -38,7 +38,7 @@ controllerFlowcash_type.update = async(req,res)=>{
 
     try {
         
-        const updated=await servicesFlowcash_type.update(req.body.updateFlowcash_type, req.params.id);
+        const updated=await servicesFlowcash_type.update(req.body.updateFlowcash_type, Number.parseInt(req.params.id));
 
         return res.status(200).json({
             message:`the register \"${req.params.id}\" has updated`
@@ -69,7 +69,7 @@ controllerFlowcash_type.delete = async(req,res)=>{
 
     try {
         
-        await servicesFlowcash_type.delete(req.params.id);
+        await servicesFlowcash_type.delete(Number.parseInt(req.params.id));
 
         return res.status(200).json({
             message:`the register ${req.params.id} it was deleted successfuly`
@@ -107,8 +107,8 @@ controllerFlowcash_type.getAlls = async(req,res)=>{
     try {
         
         const results = await servicesFlowcash_type.getAlls(
-            req.query?.page,
-            req.query?.count
+            Number.parseInt(req.query?.page),
+            Number.parseInt(req.query?.count)
         );
 
         return res.status(200).json(results);
@@ -135,7 +135,7 @@ controllerFlowcash_type.getAlls = async(req,res)=>{
 controllerFlowcash_type.findById = async(req,res)=>{
 
     try {
-        const found = await servicesFlowcash_type.findById(req.params.id);
+        const found = await servicesFlowcash_type.findById(Number.parseInt(req.params.id));
         return res.status(200).json({
             data:found
         });     

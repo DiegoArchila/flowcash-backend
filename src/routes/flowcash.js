@@ -20,11 +20,11 @@ router
     /**
     * PATHS for /flowcash/flowcash
     */
-     .post("/create", controllerFlowcash.create)
-     .post("/:id/update", controllerFlowcash.update)
-     .delete("/:id/delete", controllerFlowcash.delete)
-     .get("/:id", controllerFlowcash.findById)
-     .get("/", controllerFlowcash.getAlls)
+    .post("/create", controllerFlowcash.create)
+    .post("/:id/update", controllerFlowcash.update)
+    .delete("/:id/delete", controllerFlowcash.delete)
+    .get("/:id", controllerFlowcash.findById)
+    .get("/", controllerFlowcash.getAlls)
 
     /**
     * PATHS for /flowcash/operationtype/create
@@ -51,8 +51,6 @@ router
     .post("/flowcash_type/:id/update", controllerFlowcash_type.update)
     .delete("/flowcash_type/:id/delete", controllerFlowcash_type.delete)
     .get("/flowcash_type/:id", controllerFlowcash_type.findById)
-    .get("/flowcash_type", controllerFlowcash_type.getAlls)
-
-  
+    .get("/flowcash_type", controllerFlowcash_type.getAlls)  
 
 module.exports=router;

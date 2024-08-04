@@ -7,7 +7,7 @@
 module.exports=(sequelize, DataTypes) =>{
 
     //Set the Alias
-    const alias = "Balance_daily";
+    const alias = "balance_daily";
 
     //Sets Columns
     const Columns = {
@@ -53,4 +53,6 @@ module.exports=(sequelize, DataTypes) =>{
         });
 
     }
+
+    return Balance_daily;
 }
