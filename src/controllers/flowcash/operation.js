@@ -106,8 +106,8 @@ controllerOperation.getAlls = async(req,res)=>{
     try {
         
         const results = await servicesOperation.getAlls(
-            Number.parseInt(req.query?.page),
-            Number.parseInt(req.query?.count)
+            req.query?.page,
+            req.query?.count
         );
 
         return res.status(200).json(results);

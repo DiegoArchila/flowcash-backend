@@ -73,10 +73,10 @@ flowcashServices.getAlls= async(page, count)=>{
 
     } else {
         results = await db.flowcash.findAndCountAll();
-        return {
-            count: results.row,
-            data: results
-        }
+            return {
+                count: results.row,
+                data: results
+            }
     }
 
     return {
@@ -90,7 +90,7 @@ flowcashServices.getAlls= async(page, count)=>{
 
 flowcashServices.findById= async(id)=>{
 
-    const found = await db.flowcash.findByPk(id);
+    const found = await db.flowcash.findByPk(Number.parseInt(id));
     
     if (!found) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)

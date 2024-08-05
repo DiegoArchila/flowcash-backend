@@ -23,7 +23,7 @@ operationServices.update= async(updateOperation,id)=>{
         notes: updateOperation.notes
     },{
         where: {
-            id:id
+            id:Number.parseInt(id)
         }
     });
 
@@ -48,7 +48,7 @@ operationServices.delete= async(id)=>{
 
     const response = await db.operation
         .destroy({where:{
-            id:id
+            id:Number.parseInt(id)
         }});
 
     console.log("Response while try found the id: ", response);
@@ -74,10 +74,10 @@ operationServices.getAlls= async(page, count)=>{
 
     } else {
         results = await db.operation.findAndCountAll();
-        return {
-            count: results.row,
-            data: results
-        }
+            return {
+                count: results.row,
+                data: results
+            }
     }
 
     return {
@@ -91,7 +91,7 @@ operationServices.getAlls= async(page, count)=>{
 
 operationServices.findById= async(id)=>{
 
-    const found = await db.operation.findByPk(id);
+    const found = await db.operation.findByPk(Number.parseInt(id));
     
     if (!found) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)

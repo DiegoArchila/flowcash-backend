@@ -11,7 +11,7 @@ const operationTypeServices={};
  */
 operationTypeServices.findById=async(id)=>{
     
-    const found = await db.operation_type.findByPk(id);
+    const found = await db.operation_type.findByPk(Number.parseInt(id));
     
     if (!found) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)
@@ -114,10 +114,12 @@ operationTypeServices.getAlls=async(page, count) => {
         );
 
     } else {
-        results = await db.operation_type.findAndCountAll();
-        return {
-            data: results
-        }
+        results = await db.operation_type.findAndCountAll(
+            {
+                limit: count,
+                offset: (page-1) * count
+            }
+        );
     }
 
     return {

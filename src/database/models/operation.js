@@ -23,7 +23,11 @@ module.exports=(sequelize, DataTypes) =>{
         },
         operation_type_id:{
             type: DataTypes.SMALLINT,
-            allowNull: false
+            allowNull: false,
+            references:{
+                model: "operation_type",
+                key: "id"
+            }
         },
         notes:{
             type: DataTypes.TEXT,

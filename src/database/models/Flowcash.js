@@ -23,11 +23,19 @@ module.exports=(sequelize, DataTypes) =>{
         },
         operation_id:{
             type: DataTypes.SMALLINT,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: "operation",
+                key: "id"
+            }
         },
         flowcash_type_id:{
             type: DataTypes.SMALLINT,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: "flowcash_type",
+                key: "id"
+            }
         },
         value:{
             type:DataTypes.DECIMAL,

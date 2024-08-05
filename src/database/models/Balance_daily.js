@@ -19,7 +19,11 @@ module.exports=(sequelize, DataTypes) =>{
         },
         flowcash_type_id:{
             type: DataTypes.SMALLINT,
-            allowNull: false
+            allowNull: false,
+            references: {
+                model: "flowcash_type",
+                key: "id"
+            }
         },
         datetime:{
             type: DataTypes.DATE,

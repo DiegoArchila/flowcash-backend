@@ -9,6 +9,9 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
+/**Import models manually */
+const operation_type = require("./operation_type");
+
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
@@ -39,5 +42,21 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+/** Auto Update */
+sequelize.sync({force:true});
+
+// sequelize.addHook("afterSync", async ()=>{
+//   await db.operation_type.create(
+//     {type: "ingreso", is_sum: true, notes:null}
+//   );
+//   await db.operation_type.create(
+//     {type: "egreso", is_sum: false, notes:null}
+//   );
+  
+// });
+
+
+/** Add the data required for this project */
 
 module.exports = db;
