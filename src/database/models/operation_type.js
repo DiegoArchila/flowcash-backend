@@ -3,7 +3,6 @@
  * @param {import("sequelize").Sequelize} sequelize 
  * @param {import("sequelize").DataTypes} DataTypes 
  */
-
 module.exports=(sequelize, DataTypes) =>{
 
     //Set the Alias

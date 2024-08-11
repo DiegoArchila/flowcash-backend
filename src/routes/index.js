@@ -1,23 +1,17 @@
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
-
 const router = express.Router();
 
-fs.readdirSync(__dirname).forEach(file => {
+/** Imports the routes files */
 
-    /**
-     * We are validating if the file found is a file .js and not is this same file "index.js"
-     */
-    if (file !== "index.js" && file.endsWith(".js")) {
+/**[FLOWCASH]*/
+const operation_type =require("./flowcash/operation_type");
+const operation =require("./flowcash/operation");
+const flowcash_type =require("./flowcash/flowcash_type");
+const flowcash =require("./flowcash/flowcash");
 
-        const route=require(path.join(__dirname, file));
-
-        const nameRoute= file.split(".")[0];
-
-        router.use(`/api/${nameRoute}`,route);
-    }
-
-});
+router.use(operation_type);
+router.use(operation);
+router.use(flowcash_type);
+router.use(flowcash);
 
 module.exports=router;

@@ -114,12 +114,11 @@ operationTypeServices.getAlls=async(page, count) => {
         );
 
     } else {
-        results = await db.operation_type.findAndCountAll(
-            {
-                limit: count,
-                offset: (page-1) * count
+        results = await db.operation_type.findAndCountAll();
+            return {
+                count: results.row,
+                data: results
             }
-        );
     }
 
     return {
