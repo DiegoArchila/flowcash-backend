@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const logger = require("morgan");
 const dotenv = require('dotenv').config();
+const cors = require("cors");
 
 // Internal Modules
 const routes=require("./routes");
@@ -25,6 +26,9 @@ require('dotenv').config();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(logger("dev"));
+app.use(cors({
+	origin: "*"
+}));
 
 /* --------------------------------------------------
 /* ROUTE HANDLING
