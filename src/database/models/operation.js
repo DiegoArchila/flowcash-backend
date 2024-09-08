@@ -19,7 +19,8 @@ module.exports=(sequelize, DataTypes) =>{
         },
         type:{
             type: DataTypes.STRING(64),
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         operation_type_id:{
             type: DataTypes.SMALLINT,
