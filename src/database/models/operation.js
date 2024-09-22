@@ -20,7 +20,6 @@ module.exports=(sequelize, DataTypes) =>{
         type:{
             type: DataTypes.STRING(64),
             allowNull: false,
-            unique: true
         },
         operation_type_id:{
             type: DataTypes.SMALLINT,
@@ -39,11 +38,25 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "operation",
-        timestamps: false
+        timestamps: false,
+        indexes: [
+            {
+                unique: true,
+                fields: ["type", "operation_type_id"]
+            }
+        ]
     }
 
     // Assignation
     const operation= sequelize.define(alias, Columns, config);
+
+    //HOOKS
+    operation.beforeCreate((operation) =>{
+        if (operation.type) {
+            //Convert to lowercase to compare and prevent any error on duplicate before save
+            operation.type = operation.type.toLowerCase();
+        }
+    });
 
     //Relationship
     operation.associations= function(models) {

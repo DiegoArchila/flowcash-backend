@@ -17,7 +17,6 @@ flowcashServices.create= async(newFlowcash)=>{
 flowcashServices.update= async(updateFlowcash,id)=>{
 
     const updated = await db.flowcash.update({
-        datetime: new Date(),
         operation_id: updateFlowcash.operation_id,
         flowcash_type_id: updateFlowcash.flowcash_type_id,
         value: updateFlowcash.value,
