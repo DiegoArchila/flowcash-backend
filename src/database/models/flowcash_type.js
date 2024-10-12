@@ -46,10 +46,18 @@ module.exports=(sequelize, DataTypes) =>{
     // Assignation
     const flowcash_type= sequelize.define(alias, Columns, config);
 
+    //HOOKS
+    flowcash_type.beforeCreate((operation) =>{
+        if (flowcash_type.name) {
+            //Convert to lowercase to compare and prevent any error on duplicate before save
+            flowcash_type.name = flowcash_type.name.toLowerCase();
+        }
+    });
+
     //Relationship
-    flowcash_type.associations= function(models) {
+    flowcash_type.associate= function(models) {
         
-        flowcash_type.hasMany(models.Flowcash,{
+        flowcash_type.hasMany(models.flowcash,{
             foreignKey: "flowcash_type_id",
             as: "flowcash_types"
         });

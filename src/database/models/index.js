@@ -45,56 +45,56 @@ db.Sequelize = Sequelize;
 
 
 /** Auto Update */
-sequelize.sync({force:true})
-  .then( async () => {
-    await db.operation_type.bulkCreate([
-      {type: "ingreso", is_sum: true, notes:null}, // ID: 1
-      {type: "egreso", is_sum: false, notes:null} // ID: 2
-    ]);
+// sequelize.sync()
+//   .then( async () => {
+//     await db.operation_type.bulkCreate([
+//       {type: "ingreso", is_sum: true, notes:null}, // ID: 1
+//       {type: "egreso", is_sum: false, notes:null} // ID: 2
+//     ]);
 
-    await db.operation.bulkCreate([
-      {
-        type: "gastos operativos", 
-        operation_type_id: 2, 
-        notes:'como lo son la luz, el agua, el arriendo, planes de celulares, internet y todo lo relacionado a los gastos operacionales estructurales o fisicos dependientes para el funcionamiento del negocio'
-      },
-      {
-        type: "gastos fletes", 
-        operation_type_id: 2, 
-        notes:'estos gastos estan relacionados con los pagos de transportes, ya sea pago de transporte del envio de productos de los proveedores'
-      },
-      {
-        type: "gastos alimentos", 
-        operation_type_id: 2, 
-        notes:'Estos gastos estan relacionados con el pago de alimentos comidas y bebidas'
-      },
-      {
-        type: "pagos a proveedores", 
-        operation_type_id: 2, 
-        notes:'estos pagos son cuando se pagan las facturas o servicios a los proveedores'
-      },
-      {
-        type: "pagos de clientes", 
-        operation_type_id: 1, 
-        notes:'estos pagos son cuando el cliente paga facturas o servicios'
-      }
-    ]);
+//     await db.operation.bulkCreate([
+//       {
+//         type: "gastos operativos", 
+//         operation_type_id: 2, 
+//         notes:'como lo son la luz, el agua, el arriendo, planes de celulares, internet y todo lo relacionado a los gastos operacionales estructurales o fisicos dependientes para el funcionamiento del negocio'
+//       },
+//       {
+//         type: "gastos fletes", 
+//         operation_type_id: 2, 
+//         notes:'estos gastos estan relacionados con los pagos de transportes, ya sea pago de transporte del envio de productos de los proveedores'
+//       },
+//       {
+//         type: "gastos alimentos", 
+//         operation_type_id: 2, 
+//         notes:'Estos gastos estan relacionados con el pago de alimentos comidas y bebidas'
+//       },
+//       {
+//         type: "pagos a proveedores", 
+//         operation_type_id: 2, 
+//         notes:'estos pagos son cuando se pagan las facturas o servicios a los proveedores'
+//       },
+//       {
+//         type: "pagos de clientes", 
+//         operation_type_id: 1, 
+//         notes:'estos pagos son cuando el cliente paga facturas o servicios'
+//       }
+//     ]);
 
-    await db.flowcash_type.bulkCreate([
-      {
-        name: 'efectivo',
-        balance: 0,
-        notes: 'en esta caja se almacenará todo el fujo del efectivo'
-      },
-      {
-        name: 'bancolombia ahorro',
-        balance: 0,
-        notes: 'en esta caja se almacenará todo el fujo de la cuenta bancaria de ahorros'
-      },
-    ]);
+//     await db.flowcash_type.bulkCreate([
+//       {
+//         name: 'efectivo',
+//         balance: 0,
+//         notes: 'en esta caja se almacenará todo el fujo del efectivo'
+//       },
+//       {
+//         name: 'bancolombia ahorro',
+//         balance: 0,
+//         notes: 'en esta caja se almacenará todo el fujo de la cuenta bancaria de ahorros'
+//       },
+//     ]);
 
 
-});
+// });
 
 
 /** Add the data required for this project */

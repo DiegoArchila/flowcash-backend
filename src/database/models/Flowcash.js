@@ -57,13 +57,13 @@ module.exports=(sequelize, DataTypes) =>{
     const flowcash= sequelize.define(alias, Columns, config);
 
     //Relationship
-    flowcash.associations= function(models) {
+    flowcash.associate= function(models) {
         
-        flowcash.belongsTo(models.Flowcash_type,{
+        flowcash.belongsTo(models.flowcash_type,{
             as: "type_flowcash"
         });
 
-        flowcash.belongsTo(models.Operation,{
+        flowcash.belongsTo(models.operation,{
             as: "operation_flowcash"
         });
 
