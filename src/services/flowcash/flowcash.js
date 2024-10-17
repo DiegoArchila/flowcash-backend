@@ -66,12 +66,19 @@ flowcashServices.getAlls= async(page, count)=>{
         results = await db.flowcash.findAndCountAll(
             {
                 limit: count,
-                offset: (page-1) * count
+                offset: (page-1) * count,
+                order: [
+                    ['datetime', 'DESC']
+                ]
             }
         );
 
     } else {
-        results = await db.flowcash.findAndCountAll();
+        results = await db.flowcash.findAndCountAll({
+                order: [
+                    ['datetime', 'DESC']
+                ]
+        });
             return {
                 count: results.row,
                 data: results

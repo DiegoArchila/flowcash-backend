@@ -61,11 +61,13 @@ module.exports=(sequelize, DataTypes) =>{
         
         flowcash.belongsTo(models.flowcash_type,{
             as: "flowcash_type",
+            foreignKey: "flowcash_type_id"
             
         });
 
         flowcash.belongsTo(models.operation,{
-            as: "operation_flowcash"
+            as: "operation_flowcash",
+            foreignKey: "operation_id"
         });
 
     }

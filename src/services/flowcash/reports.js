@@ -10,7 +10,6 @@ reportsServices.getBalances= async()=>{
             SELECT
                 flowcash_type.id AS flowcashTypeId,
                 flowcash_type.name AS flowcashTypeName,
-                operation.type AS operation,
                 operation_type.type AS operationTypeName,
                 operation_type.is_sum AS is_sum,
                 SUM(COALESCE(public.flowcash.value,0)) AS total 
@@ -21,7 +20,7 @@ reportsServices.getBalances= async()=>{
                 operation.id = flowcash.operation_id
             INNER JOIN operation_type ON
                 operation_type.id = operation.operation_type_id
-            GROUP BY flowcashTypeId, flowcashTypeName, operation, operationTypeName, is_sum
+            GROUP BY flowcashTypeId, flowcashTypeName, operationTypeName, is_sum
             ORDER BY flowcashTypeId, is_sum DESC;
         `,{
             type: db.sequelize.QueryTypes.SELECT
