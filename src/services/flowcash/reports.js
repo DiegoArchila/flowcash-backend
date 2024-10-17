@@ -22,7 +22,7 @@ reportsServices.getBalances= async()=>{
             INNER JOIN operation_type ON
                 operation_type.id = operation.operation_type_id
             GROUP BY flowcashTypeId, flowcashTypeName, operation, operationTypeName, is_sum
-            ORDER BY flowcashTypeId;
+            ORDER BY flowcashTypeId, is_sum DESC;
         `,{
             type: db.sequelize.QueryTypes.SELECT
         })
