@@ -60,7 +60,8 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash.associate= function(models) {
         
         flowcash.belongsTo(models.flowcash_type,{
-            as: "type_flowcash"
+            as: "flowcash_type",
+            
         });
 
         flowcash.belongsTo(models.operation,{

@@ -58,14 +58,10 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash_type.associate= function(models) {
         
         flowcash_type.hasMany(models.flowcash,{
-            foreignKey: "flowcash_type_id",
-            as: "flowcash_types"
+            as: "flowcash",
+            foreignKey: "flowcash_type_id"
         });
 
-        flowcash_type.hasMany(models.Balance_daily,{
-            foreignKey: "flowcash_type_id",
-            as: "flowcash_balances_dailies"
-        })
     };
 
     return flowcash_type;

@@ -6,40 +6,28 @@ const reportsServices={};
 
 reportsServices.getBalances= async()=>{
         
-        const response = await db.flowcash.findAll({
-            attributes: [
-                [col('flowcash_type.id'), 'id'],
-                [col('flowcash_type.name'), 'flowcash'],
-                [col('operation_type.type'), 'type'],
-                [col('operation_type.is_sum'), 'isSum'],
-                [col('SUM', fn('COALESCE', col('flowcash.value'), 0)), 'total'],                
-            ],
-            include:[
-                {
-                    association: "flowcash_types",
-                    attributes: [],
-                    required: true
-                },
-                {
-                    model: db.operation,
-                    attributes: [],
-                    required: true,
-                    include: [
-                        {
-                            model: db.operation_type,
-                            attributes: [],
-                            required: true
-                        }
-                    ]
-                }
-            ],
-            group: ['flowcash_type.id', 'flowcash_type.name', 'operation_type.type'],
-            order: [[col('flowcash_type.name'),'ASC']]
-        });
-    
+        const response = await db.sequelize.query(`
+            SELECT
+                flowcash_type.id AS flowcashTypeId,
+                flowcash_type.name AS flowcashTypeName,
+                operation.type AS operation,
+                operation_type.type AS operationTypeName,
+                operation_type.is_sum AS is_sum,
+                SUM(COALESCE(public.flowcash.value,0)) AS total 
+            FROM flowcash
+            INNER JOIN flowcash_type ON
+                flowcash_type.id = flowcash.flowcash_type_id	
+            INNER JOIN operation ON
+                operation.id = flowcash.operation_id
+            INNER JOIN operation_type ON
+                operation_type.id = operation.operation_type_id
+            GROUP BY flowcashTypeId, flowcashTypeName, operation, operationTypeName, is_sum
+            ORDER BY flowcashTypeId;
+        `,{
+            type: db.sequelize.QueryTypes.SELECT
+        })
+
         return response;
-
-
 };
 
 
