@@ -1,5 +1,5 @@
 /**
- * balance_daily Object Model Representation
+ * balance_period Object Model Representation
  * @param {import("sequelize").Sequelize} sequelize 
  * @param {import("sequelize").DataTypes} DataTypes 
  */
@@ -7,16 +7,23 @@
 module.exports=(sequelize, DataTypes) =>{
 
     //Set the Alias
-    const alias = "balance_daily";
+    const alias = "balance_period";
 
     //Sets Columns
     const Columns = {
+
         id:{
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false
         },
+
+        balance_document: {
+            type: DataTypes.UUID,
+            allowNull: false            
+        },
+
         flowcash_type_id:{
             type: DataTypes.SMALLINT,
             allowNull: false,
@@ -25,15 +32,31 @@ module.exports=(sequelize, DataTypes) =>{
                 key: "id"
             }
         },
-        datetime:{
+        
+        datetime_start:{
             type: DataTypes.DATE,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         },
+        
+        datetime_end:{
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+
         balance:{
             type:DataTypes.DECIMAL,
             allowNull: false
         },
+
+        user_id:{
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: 'users',
+                key: 'id'
+            }
+        },
+
         notes:{
             type: DataTypes.TEXT,
             allowNull: true
@@ -42,21 +65,22 @@ module.exports=(sequelize, DataTypes) =>{
 
     // Set configurations from model or table
     const config={
-        tableName: "balance_daily",
+        tableName: "balance_period",
         timestamps: false
     }
 
     // Assignation
-    const Balance_daily= sequelize.define(alias, Columns, config);
+    const balance_period= sequelize.define(alias, Columns, config);
 
     //Relationship
-    Balance_daily.associations= function(models) {
+    balance_period.associate= function(models) {
         
-        Balance_daily.belongsTo(models.Flowcash_type,{
-            as: "flowcash_balance_daily"
+        balance_period.belongsTo(models.flowcash_type,{
+            as: "rel-balance_period-flowcashs",
+            foreignKey: 'flowcash_type_id'
         });
 
     }
 
-    return Balance_daily;
+    return balance_period;
 }

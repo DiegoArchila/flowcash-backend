@@ -20,6 +20,7 @@ module.exports=(sequelize, DataTypes) =>{
         type:{
             type: DataTypes.STRING(64),
             allowNull: false,
+            unique: true
         },
         operation_type_id:{
             type: DataTypes.SMALLINT,
@@ -52,26 +53,29 @@ module.exports=(sequelize, DataTypes) =>{
 
     //HOOKS
     operation.beforeCreate((operation) =>{
+
         if (operation.type) {
             //Convert to lowercase to compare and prevent any error on duplicate before save
             operation.type = operation.type.toLowerCase();
         }
+
     });
 
     //Relationship
-    operation.associations= function(models) {
+    operation.associate= function(models) {
         
         operation.belongsTo(models.operation_type,{
-            as: "type_operation"
+            as: "rel-operation-operation_types",
+            foreignKey: 'operation_type_id'
         });
 
-        operation.hasMany(models.Flowcash,{
-            foreignKey:"operation_id",
-            as: "operations_flowcash"
+        operation.hasMany(models.flowcash,{
+            as: "rel-operation-flowcashs",
+            foreignKey:"operation_id"
         });
+
     };
 
     return operation;
 
-    
 }

@@ -44,6 +44,11 @@ module.exports=(sequelize, DataTypes) =>{
         description:{
             type: DataTypes.TEXT,
             allowNull: false
+        },
+
+        balance_period_id: {
+            type: DataTypes.UUID,
+            allowNull: true
         }
     };
 
@@ -60,13 +65,13 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash.associate= function(models) {
         
         flowcash.belongsTo(models.flowcash_type,{
-            as: "flowcash_type",
+            as: "rel-flowcash-flowcash_types",
             foreignKey: "flowcash_type_id"
             
         });
 
         flowcash.belongsTo(models.operation,{
-            as: "operation_flowcash",
+            as: "rel-flowcash-operations",
             foreignKey: "operation_id"
         });
 

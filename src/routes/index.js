@@ -4,11 +4,11 @@ const router = express.Router();
 /** Imports the routes files */
 
 /**[FLOWCASH]*/
-const operation_type =require("./flowcash/operation_type");
-const operation =require("./flowcash/operation");
-const flowcash_type =require("./flowcash/flowcash_type");
-const flowcash =require("./flowcash/flowcash");
-const reports =require("./flowcash/reports");
+const operation_type =require("./flowcash/Operation_type");
+const operation =require("./flowcash/Operation");
+const flowcash_type =require("./flowcash/Flowcash_type");
+const flowcash =require("./flowcash/Flowcash");
+const reports =require("./flowcash/Reports");
 
 router.use(reports);
 router.use(operation_type);

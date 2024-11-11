@@ -42,11 +42,13 @@ module.exports=(sequelize, DataTypes) =>{
     const operation_type= sequelize.define(alias, Columns, config);
 
     //Relationship
-    operation_type.associations= function(models) {
+    operation_type.associate= function(models) {
+
         operation_type.hasMany(models.operation,{
             foreignKey: "operation_type_id",
-            as: "operations"
-        })
+            as: "rel-operation_type-operations"
+        });
+        
     }
 
     return operation_type;

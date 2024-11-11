@@ -11,26 +11,31 @@ module.exports=(sequelize, DataTypes) =>{
 
     //Sets Columns
     const Columns = {
+
         id:{
             type: DataTypes.SMALLINT,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false
         },
+
         name:{
             type: DataTypes.STRING(64),
             allowNull: false,
             unique: true
         },
+
         balance:{
             type:DataTypes.DECIMAL,
             allowNull: false
         },
+
         datetime:{
             type: DataTypes.DATE,
             defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
             allowNull: false
         },
+
         notes:{
             type: DataTypes.TEXT,
             allowNull: true
@@ -58,7 +63,12 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash_type.associate= function(models) {
         
         flowcash_type.hasMany(models.flowcash,{
-            as: "flowcash",
+            as: "rel-flowcash_type-flowcashs",
+            foreignKey: "flowcash_type_id"
+        });
+
+        flowcash_type.hasMany(models.balance_period,{
+            as: "rel-flowcash_type-balance_periods",
             foreignKey: "flowcash_type_id"
         });
 
