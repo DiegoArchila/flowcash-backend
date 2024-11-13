@@ -35,7 +35,19 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "operation_type",
-        timestamps: false
+        timestamps: false,
+        hooks:{
+            beforeCreate: (operation_type) =>{
+                if(operation_type.type){
+                    operation_type.dataValues.type=operation_type.type.toLowerCase();
+                }
+            },
+            beforeUpdate: (operation_type) =>{
+                if(operation_type.type){
+                    operation_type.dataValues.type=operation_type.type.toLowerCase();
+                }
+            }
+        }
     }
 
     // Assignation
@@ -46,7 +58,7 @@ module.exports=(sequelize, DataTypes) =>{
 
         operation_type.hasMany(models.operation,{
             foreignKey: "operation_type_id",
-            as: "rel-operation_type-operations"
+            as: "operations"
         });
         
     }

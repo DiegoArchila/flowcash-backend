@@ -45,17 +45,24 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "flowcash_type",
-        timestamps: false
+        timestamps: false,
     }
 
     // Assignation
     const flowcash_type= sequelize.define(alias, Columns, config);
 
     //HOOKS
-    flowcash_type.beforeCreate((operation) =>{
-        if (flowcash_type.name) {
+    flowcash_type.beforeCreate((flowcashType) =>{
+        if (flowcashType.name) {
             //Convert to lowercase to compare and prevent any error on duplicate before save
-            flowcash_type.name = flowcash_type.name.toLowerCase();
+            flowcashType.dataValues.name = flowcashType.name.toLowerCase();
+        }
+    });
+
+    flowcash_type.beforeUpdate((flowcashType) =>{
+        if (flowcashType.name) {
+            //Convert to lowercase to compare and prevent any error on duplicate before save
+            flowcashType.dataValues.name = flowcashType.name.toLowerCase();
         }
     });
 
@@ -63,12 +70,12 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash_type.associate= function(models) {
         
         flowcash_type.hasMany(models.flowcash,{
-            as: "rel-flowcash_type-flowcashs",
+            as: "flowcashsMovements",
             foreignKey: "flowcash_type_id"
         });
 
         flowcash_type.hasMany(models.balance_period,{
-            as: "rel-flowcash_type-balance_periods",
+            as: "balancesPeriods",
             foreignKey: "flowcash_type_id"
         });
 

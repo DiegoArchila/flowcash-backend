@@ -76,7 +76,7 @@ module.exports=(sequelize, DataTypes) =>{
     balance_period.associate= function(models) {
         
         balance_period.belongsTo(models.flowcash_type,{
-            as: "rel-balance_period-flowcashs",
+            as: "flowcash_types",
             foreignKey: 'flowcash_type_id'
         });
 

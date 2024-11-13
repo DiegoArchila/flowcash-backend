@@ -11,7 +11,7 @@ module.exports=(sequelize, DataTypes) =>{
     //Sets Columns
     const Columns = {
         id:{
-            type: DataTypes.SMALLINT,
+            type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false
@@ -65,13 +65,13 @@ module.exports=(sequelize, DataTypes) =>{
     flowcash.associate= function(models) {
         
         flowcash.belongsTo(models.flowcash_type,{
-            as: "rel-flowcash-flowcash_types",
+            as: "flowcash_type",
             foreignKey: "flowcash_type_id"
             
         });
 
         flowcash.belongsTo(models.operation,{
-            as: "rel-flowcash-operations",
+            as: "operation",
             foreignKey: "operation_id"
         });
 

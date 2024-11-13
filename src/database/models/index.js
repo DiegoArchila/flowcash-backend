@@ -42,7 +42,7 @@ db.Sequelize = Sequelize;
 
 
 /** Auto Update */
-// sequelize.sync()
+sequelize.sync();
 //   .then( async () => {
 //     await db.operation_type.bulkCreate([
 //       {type: "ingreso", is_sum: true, notes:null}, // ID: 1

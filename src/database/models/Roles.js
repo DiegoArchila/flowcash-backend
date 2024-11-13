@@ -12,9 +12,16 @@ module.exports=(sequelize, DataTypes) =>{
     const Columns = {
 
         id:{
+            type: DataTypes.SMALLINT,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+
+        name: {
             type: DataTypes.STRING,
             length: 128,
-            primaryKey: true,
+            allowNull: false,
+            unique: true
         },
 
         description:{
@@ -34,11 +41,24 @@ module.exports=(sequelize, DataTypes) =>{
     // Assignation
     const Roles= sequelize.define(alias, Columns, config);
 
+    // Hooks
+    Roles.addHook('beforeCreate', (roles) => {
+        if (roles.name) {
+            roles.dataValues.name=roles.name.toLocaleLowerCase();
+        }
+    });
+
+    Roles.addHook('beforeUpdate', (roles) => {
+        if (roles.name) {
+            roles.dataValues.name=roles.name.toLocaleLowerCase();
+        }
+    });
+
     //Relationship
     Roles.associate= function(models) {
         
         Roles.hasMany(models.users,{
-            as: "rel-role-users",
+            as: "users",
             foreignKey: "role_id"
         });
 

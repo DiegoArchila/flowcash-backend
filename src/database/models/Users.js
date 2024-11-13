@@ -24,9 +24,9 @@ module.exports=(sequelize, DataTypes) =>{
         },
 
         dnitype_id:{
-            type: DataTypes.STRING,
-            length: 20,
+            type: DataTypes.SMALLINT,
             allowNull: false,
+            length: 20,
             references: {
                 model: "dnitypes",
                 key: "id"
@@ -40,8 +40,9 @@ module.exports=(sequelize, DataTypes) =>{
         },
 
         role_id:{
-            type: DataTypes.TEXT,
+            type: DataTypes.SMALLINT,
             allowNull: false,
+            length: 128,
             references: {
                 model: "roles",
                 key: "id"
@@ -69,6 +70,18 @@ module.exports=(sequelize, DataTypes) =>{
             type: DataTypes.STRING,
             length: 255,
             allowNull: false,
+        },
+
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            allowNull: false
+        },
+
+        notes: {
+            type: DataTypes.STRING,
+            length: 255,
+            allowNull: true,
         }
 
     };
@@ -82,17 +95,19 @@ module.exports=(sequelize, DataTypes) =>{
     // Assignation
     const Users= sequelize.define(alias, Columns, config);
 
+    // Hooks
+
     //Relationship
     Users.associate= function(models) {
         
         Users.belongsTo(models.dnitypes,{
-            as: "rel-user-dnitypes",
+            as: "dnitype",
             foreignKey: "dnitype_id"
             
         });
 
         Users.belongsTo(models.roles,{
-            as: "rel-user-roles",
+            as: "role",
             foreignKey: "role_id"
         });
 

@@ -45,32 +45,34 @@ module.exports=(sequelize, DataTypes) =>{
                 unique: true,
                 fields: ["type", "operation_type_id"]
             }
-        ]
+        ],
+        hooks:{
+            beforeCreate: (operation) =>{
+                if(operation.type){
+                    operation.dataValues.type=operation.type.toLowerCase();
+                }
+            },
+            beforeUpdate: (operation) =>{
+                if(operation.type){
+                    operation.dataValues.type=operation.type.toLowerCase();
+                }
+            }
+        }
     }
 
     // Assignation
     const operation= sequelize.define(alias, Columns, config);
 
-    //HOOKS
-    operation.beforeCreate((operation) =>{
-
-        if (operation.type) {
-            //Convert to lowercase to compare and prevent any error on duplicate before save
-            operation.type = operation.type.toLowerCase();
-        }
-
-    });
-
     //Relationship
     operation.associate= function(models) {
         
         operation.belongsTo(models.operation_type,{
-            as: "rel-operation-operation_types",
+            as: "operation_type",
             foreignKey: 'operation_type_id'
         });
 
         operation.hasMany(models.flowcash,{
-            as: "rel-operation-flowcashs",
+            as: "flowcashs",
             foreignKey:"operation_id"
         });
 

@@ -16,4 +16,11 @@ router.use(operation);
 router.use(flowcash_type);
 router.use(flowcash);
 
+/**[Admin]*/
+const adminRoutes = require("./admin/usersAdminRoutes");
+
+router.use(adminRoutes);
+
+
+
 module.exports=router;
