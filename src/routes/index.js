@@ -21,6 +21,11 @@ const adminRoutes = require("./admin/usersAdminRoutes");
 
 router.use(adminRoutes);
 
+/**[Users]*/
+const userRoutes = require("./user/userRoutes");
+
+router.use(userRoutes);
+
 
 
 module.exports=router;

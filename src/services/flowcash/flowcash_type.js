@@ -15,22 +15,22 @@ flowcash_typeServices.create= async(newFlowcash_type)=>{
 
 flowcash_typeServices.update= async(updateFlowcash_type,id)=>{
 
-    const updated = await db.flowcash_type.update({
-        name: updateFlowcash_type.name,
-        balance: updateFlowcash_type.balance,
-        datetime: new Date(),
-        notes: updateFlowcash_type.notes
-    },{
-        where: {
-            id:id
-        }
-    });
+    const flowcash_type = await db.flowcash_type.findByPk(id);
 
-    if (updated===0) {
-        throw new ValidationError(`failed to update the register with ID \"${id}\", is possible that it's not exists, or some field is incorrect.`)
+    if (!flowcash_type) {
+        throw new ValidationError(`Don't found the register with id ${id}`);
     }
-    
-    return updated;
+
+    flowcash_type.name=updateFlowcash_type.name;
+    //flowcash_type.balance=updateFlowcash_type.balance; For integrity the field balance is not allowed for update
+    flowcash_type.datetime= new Date();
+    flowcash_type.notes=updateFlowcash_type.notes;
+
+    const updated = await flowcash_type.save();
+
+    if (!updated) {
+        throw new ValidationError(`Failed to update the register with ID \"${id}\", is possible that it's not exists, or some field is incorrect.`)
+    }
 
 };
 

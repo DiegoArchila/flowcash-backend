@@ -8,6 +8,10 @@ const userAdminController = require("../../controllers/admin/users/usersAdminCon
 router
     // [USERS]
     .post("/api/flowcash/admin/users/create", userAdminController.create)
+    .post("/api/flowcash/admin/users/:id/update", userAdminController.update)
+    .post("/api/flowcash/admin/users/:id/update/password", userAdminController.updatePassword)
+    .get("/api/flowcash/admin/users/:id", userAdminController.findById)
+    .get("/api/flowcash/admin/users", userAdminController.getAlls)
 
     // [ROLES]
     .post("/api/flowcash/admin/users/roles/create", rolesAdminController.create)

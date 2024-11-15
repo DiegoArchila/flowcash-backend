@@ -36,6 +36,7 @@ module.exports=(sequelize, DataTypes) =>{
     const config={
         tableName: "operation_type",
         timestamps: false,
+        
         hooks:{
             beforeCreate: (operation_type) =>{
                 if(operation_type.type){

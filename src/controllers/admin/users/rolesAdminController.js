@@ -130,7 +130,7 @@ rolesAdminController.getAlls = async(req,res)=>{
 rolesAdminController.findById = async(req,res)=>{
 
     try {
-        const found = await rolesAdminServices.findById(req.params.id);
+        const found = await rolesAdminServices.findById(Number.parseInt(req.params.id));
         return res.status(200).json({
             data:found
         });     

@@ -17,21 +17,23 @@ operationServices.create= async(newOperation)=>{
 
 operationServices.update= async(updateOperation,id)=>{
 
-    const updated = await db.operation.update({
-        type: updateOperation.type,
-        operation_type_id: updateOperation.operation_type_id,
-        notes: updateOperation.notes
-    },{
-        where: {
-            id:Number.parseInt(id)
-        }
-    });
 
-    if (updated===0) {
-        throw new ValidationError(`failed to update the register with ID \"${id}\", is possible that it's not exists, or some field is incorrect.`)
+    const operation = await db.operation.findByPk(id);
+
+    if (!operation) {
+        throw new ValidationError(`Don't found the register with id ${id}`);
+        
     }
-    
-    return updated;
+
+    operation.type=updateOperation.type;
+    operation.operation_type_id=updateOperation.operation_type_id;
+    operation.notes = updateOperation.notes;
+
+    const updated = await operation.save();
+
+    if (!updated) {
+        throw new ValidationError(`Failed to update the register with ID \"${id}\", is possible that it's not exists, or some field is incorrect.`)
+    }
 
 };
 

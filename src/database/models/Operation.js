@@ -19,8 +19,7 @@ module.exports=(sequelize, DataTypes) =>{
         },
         type:{
             type: DataTypes.STRING(64),
-            allowNull: false,
-            unique: true
+            allowNull: false
         },
         operation_type_id:{
             type: DataTypes.SMALLINT,
@@ -36,7 +35,7 @@ module.exports=(sequelize, DataTypes) =>{
         }
     };
 
-    // Set configurations from model or table
+    // Set configurations from model
     const config={
         tableName: "operation",
         timestamps: false,

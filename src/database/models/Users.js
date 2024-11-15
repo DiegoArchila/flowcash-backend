@@ -52,6 +52,7 @@ module.exports=(sequelize, DataTypes) =>{
         username:{
             type:DataTypes.STRING,
             length: 32,
+            unique: true,
             allowNull: false
         },
 
@@ -59,6 +60,7 @@ module.exports=(sequelize, DataTypes) =>{
             type: DataTypes.STRING,
             length: 255,
             allowNull: false,
+            unique: true,
             validate:{
                 isEmail: {
                     msg: 'Please, input an email valid'
@@ -89,7 +91,14 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "users",
-        timestamps: false
+        timestamps: false,
+        indexes: [
+            {
+                unique: true,
+                fields: ["dnitype_id", "dninumber"]
+            }
+        ],
+
     }
 
     // Assignation
