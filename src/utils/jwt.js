@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const jsonwebtoken= require("jsonwebtoken");
 
-const JWT = {};
+const token = {};
 
 /**
  * Generates a signed JSON Web Token (JWT) for a given user ID.
@@ -10,9 +10,7 @@ const JWT = {};
  * @param {string} id - The user ID to be encoded within the JWT payload.
  * @returns {string} A signed JWT string with the specified payload and expiration time.
  */
-JWT.sign = async (id) =>{
-
-    console.log("JWT_SECRET_KEY:", process.env.JWT_SECRET_KEY);
+token.sign = (id) =>{
 
     const token = jsonwebtoken.sign(
 
@@ -20,15 +18,13 @@ JWT.sign = async (id) =>{
             id:id
         },
 
-        process.env.JWT_SECRET_KEY || "caracolas",
+        process.env.JWT_SECRET_KEY,
         
         {
-            expiresIn:process.env.JWT_TIMEOUT || '1d'
+            expiresIn:process.env.JWT_TIMEOUT
         }
 
     );
-
-    console.log("Estoy firmando? estoy dento de JWT Utils, este el el id ", id)
 
     return token;
     
@@ -40,7 +36,7 @@ JWT.sign = async (id) =>{
  * @param {string} token - The JWT to verify.
  * @returns {object | boolean} Returns the decoded token object if valid, or `false` if the token is invalid or expired.
  */
-JWT.sign = (token) =>{
+token.verify = (token) =>{
 
     return jsonwebtoken.verify(token,process.env.JWT_SECRET_KEY, (err, decoded) =>{
     
@@ -53,4 +49,17 @@ JWT.sign = (token) =>{
     });
 };
 
-module.exports= JWT;
+/**
+ * Decodes a JSON Web Token (JWT) into an object containing the decoded payload and header.
+
+ * **Important Note:** This function does **not** verify the signature of the JWT. It simply decodes the token's content.
+
+ * @async
+ * @param {string} token - The JWT to be decoded.
+ * @returns {Promise<Object>} - A Promise that resolves to an object containing the decoded payload and header.
+ */
+token.decode = (token) =>{
+    return jsonwebtoken.decode(token, {complete:true});
+};
+
+module.exports= token;

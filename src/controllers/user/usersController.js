@@ -18,14 +18,16 @@ usersController.login = async(req,res)=>{
 
     try {
         
-        const isValidLogin=await usersServices.login(login.email, login.password);
+        const token=await usersServices.login(login.email, login.password);
         
-        return res.status(201).json({
-            isValidLogin
+        return res.status(200).json({
+            token
         });
         
     } catch (error) {
-        return res.status(401).send(error.errors || error);
+        return res.status(401).json({
+            message: error.message
+        });
     }
 
 };
