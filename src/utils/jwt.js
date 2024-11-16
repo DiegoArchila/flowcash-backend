@@ -41,11 +41,11 @@ token.verify = (token) =>{
     return jsonwebtoken.verify(token,process.env.JWT_SECRET_KEY, (err, decoded) =>{
     
         if(err){
-            return false;
-        } else {
-            return true;
-        }
-    
+            throw new Error("Error: token expired or invalid");
+        } 
+        
+        return true;
+   
     });
 };
 
