@@ -1,9 +1,31 @@
-const { ValidationError, where, Model } = require("sequelize");
+const { ValidationError } = require("sequelize");
 const db = require("../../database/models");
 const encrypt = require("../../utils/encrypt");
 
+/**
+ * @module usersAdminServices
+ * Provides administrative services for managing users in the system.
+ */
 const usersAdminServices={};
 
+
+/**
+ * Creates a new user in the database.
+ * 
+ * @async
+ * @function create
+ * @memberof module:usersAdminServices
+ * @param {Object} newUser - The new user's data.
+ * @param {string} newUser.names - The user's full name.
+ * @param {number} newUser.dnitype_id - The ID of the DNI type.
+ * @param {string} newUser.dninumber - The user's DNI number.
+ * @param {number} newUser.role_id - The ID of the user's role.
+ * @param {string} newUser.username - The username.
+ * @param {string} newUser.email - The email address.
+ * @param {string} newUser.password - The user's plain-text password.
+ * @param {string} [newUser.notes] - Optional notes about the user.
+ * @throws {ValidationError} If the input data is invalid.
+ */
 usersAdminServices.create= async(newUser)=>{
         
         await db.users.create({
@@ -18,6 +40,16 @@ usersAdminServices.create= async(newUser)=>{
         });
 };
 
+/**
+ * Updates a user's information in the database.
+ * 
+ * @async
+ * @function update
+ * @memberof module:usersAdminServices
+ * @param {Object} updateUser - The updated user data.
+ * @param {number} id - The ID of the user to update.
+ * @throws {ValidationError} If the user with the specified ID is not found or the update fails.
+ */
 usersAdminServices.update = async (updateUser, id) => {
 
     const user = await db.users.findByPk(id);
@@ -43,6 +75,16 @@ usersAdminServices.update = async (updateUser, id) => {
 
 };
 
+/**
+ * Updates a user's password in the database.
+ * 
+ * @async
+ * @function updatePassword
+ * @memberof module:usersAdminServices
+ * @param {Object} updateUser - The updated user data containing the new password.
+ * @param {number} id - The ID of the user to update.
+ * @throws {ValidationError} If the user with the specified ID is not found or the update fails.
+ */
 usersAdminServices.updatePassword = async (updateUser, id) => {
 
     const user = await db.users.findByPk(id);
@@ -63,6 +105,20 @@ usersAdminServices.updatePassword = async (updateUser, id) => {
 
 };
 
+/**
+ * Retrieves a paginated list of all users in the database.
+ * 
+ * @async
+ * @function getAlls
+ * @memberof module:usersAdminServices
+ * @param {number} [page] - The current page number.
+ * @param {number} [count] - The number of users to retrieve per page.
+ * @returns {Object} Paginated results.
+ * @property {number} currentPage - The current page.
+ * @property {number} totalPages - The total number of pages.
+ * @property {number} totalRow - The total number of rows.
+ * @property {Array<Object>} data - The retrieved users.
+ */
 usersAdminServices.getAlls = async (page, count) => {
 
     let results = {};
@@ -112,6 +168,16 @@ usersAdminServices.getAlls = async (page, count) => {
 
 };
 
+/**
+ * Finds a user by their ID.
+ * 
+ * @async
+ * @function findById
+ * @memberof module:usersAdminServices
+ * @param {number} id - The ID of the user to find.
+ * @returns {Object} The found user.
+ * @throws {ValidationError} If the user with the specified ID is not found.
+ */
 usersAdminServices.findById= async(id)=>{
 
     const found = await db.users.findByPk(id,{
@@ -127,6 +193,45 @@ usersAdminServices.findById= async(id)=>{
     }
 
     return found;
+
+};
+
+/**
+ * Validates if a user is an administrator based on their role.
+ *
+ * This function fetches a user by their ID, checks their role, 
+ * and determines if the user is an admin. Throws an error if the 
+ * user is not found or if the user's role is not 'admin'.
+ *
+ * @async
+ * @function
+ * @param {number|string} id - The unique identifier of the user to validate.
+ * @returns {Promise<boolean>} - Resolves to `true` if the user is an admin.
+ * @throws {ValidationError} - Throws if the user is not found or has no role.
+ * @throws {Error} - Throws if the user's role is not 'admin'.
+ */
+usersAdminServices.isAdmin= async (id) => {
+
+    const found = await db.users.findByPk(id,{
+        attributes:['id','names', 'role_id', 'isActive'],
+            include: [
+                { model: db.roles, as: 'role' }
+            ]
+    });
+    
+    if (!found) {
+        throw new ValidationError(`the register with ID \"${id}\" it was not found for validate id is a user Admin`)
+    }
+
+    console.log(found.role.name)
+
+    if (found.role.name==='admin') {
+        
+        return true;
+
+    } else {
+        throw new Error('token not validate for admin');
+    }
 
 };
 

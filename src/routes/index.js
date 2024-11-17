@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isUser } = require("../middlewares/usersMiddleware");
+const { isAdmin } = require("../middlewares/adminMiddleware");
 
 /** Imports the routes files */
 
@@ -16,7 +17,7 @@ const flowcash_type =require("./flowcash/Flowcash_type");
 const flowcash =require("./flowcash/Flowcash");
 const reports =require("./flowcash/Reports");
 
-router.use(isUser) //Protect this section routes
+router.use(isUser); //Added layer for validation if is a user
 router.use(reports);
 router.use(operation_type);
 router.use(operation);
@@ -26,7 +27,7 @@ router.use(flowcash);
 /**[Admin]*/
 const adminRoutes = require("./admin/usersAdminRoutes");
 
-router.use(isUser) //Protect this section routes
+router.use(isAdmin); //Added layer for validation if is a ADMIN
 router.use(adminRoutes);
 
 /**[Users]*/
