@@ -14,11 +14,9 @@ usersController.login = async(req,res)=>{
 
     const { login } = req.body;
 
-
-
     try {
         
-        const token=await usersServices.login(login.email, login.password);
+        const token= await usersServices.login(login.email, login.password);
         
         return res.status(200).json({
             token

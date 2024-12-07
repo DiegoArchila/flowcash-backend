@@ -1,8 +1,17 @@
-const { ValidationError, where } = require("sequelize");
+const { ValidationError, where, Op } = require("sequelize");
 const db = require("../../database/models");
 
 const flowcashServices={};
 
+/**
+ * Creates a new flowcash record.
+ * @param {Object} newFlowcash - The data for the new flowcash record.
+ * @param {number} newFlowcash.operation_id - The ID of the related operation.
+ * @param {number} newFlowcash.flowcash_type_id - The ID of the flowcash type.
+ * @param {number} newFlowcash.value - The value of the flowcash.
+ * @param {string} newFlowcash.description - Description of the flowcash.
+ * @returns {Promise<Object>} The created flowcash record.
+ */
 flowcashServices.create= async(newFlowcash)=>{
 
     const response = await db.flowcash.create({
@@ -14,6 +23,13 @@ flowcashServices.create= async(newFlowcash)=>{
 
 };
 
+/**
+ * Updates an existing flowcash record.
+ * @param {Object} updateFlowcash - The updated data for the flowcash record.
+ * @param {number} id - The ID of the flowcash record to update.
+ * @throws {ValidationError} If no records are updated.
+ * @returns {Promise<number>} The number of affected rows.
+ */
 flowcashServices.update= async(updateFlowcash,id)=>{
 
     const updated = await db.flowcash.update({
@@ -35,6 +51,13 @@ flowcashServices.update= async(updateFlowcash,id)=>{
 
 };
 
+/**
+ * Deletes a flowcash record.
+ * @param {number} id - The ID of the flowcash record to delete.
+ * @throws {ValidationError} If the record does not exist.
+ * @throws {Error} If the deletion fails.
+ * @returns {Promise<number>} The number of affected rows.
+ */
 flowcashServices.delete= async(id)=>{
 
    // First we validating if the register exists
@@ -57,14 +80,50 @@ flowcashServices.delete= async(id)=>{
     } 
 };
 
+/**
+ * Retrieves paginated flowcash records.
+ * @param {number} [page] - The page number for pagination.
+ * @param {number} [count] - The number of records per page.
+ * @returns {Promise<Object>} Paginated flowcash records.
+ */
 flowcashServices.getAlls= async(page, count)=>{
 
     let results={};
+
+    //Variables for found the last dateInitial
+    let balancePeriodFlowcashType=[];
+    let balancePeriodFlowcash=[];
+
+
+    balancePeriodFlowcash = await db.balance_period.findAll({
+        attributes: ["datetime_end"],
+        limit:1,
+        order: [
+            ['datetime_end', 'DESC']
+        ]
+    });
+
+    //If the balancePeriofFlowcash don't have anything, then we will search the last date in the flowcash_type
+    if (balancePeriodFlowcash.length===0) {
+        balancePeriodFlowcashType= await db.flowcash_type.findAll({
+            attributes: ["datetime"],
+            limit:1,
+            order: [
+                ['datetime', 'DESC']
+            ]
+        });
+    }
 
     if (page && count) {
 
         results = await db.flowcash.findAndCountAll(
             {
+                where: {
+                    datetime: {[Op.gt]: (balancePeriodFlowcash.length>0) ?
+                        balancePeriodFlowcash[0].datetime_end :
+                        balancePeriodFlowcashType[0].datetime
+                    }
+                },
                 limit: count,
                 offset: (page-1) * count,
                 order: [
@@ -94,6 +153,12 @@ flowcashServices.getAlls= async(page, count)=>{
 
 };
 
+/**
+ * Finds a flowcash record by its ID.
+ * @param {number} id - The ID of the flowcash record.
+ * @throws {ValidationError} If the record is not found.
+ * @returns {Promise<Object>} The found flowcash record.
+ */
 flowcashServices.findById= async(id)=>{
 
     const found = await db.flowcash.findByPk(Number.parseInt(id));

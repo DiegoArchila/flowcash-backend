@@ -30,7 +30,7 @@ usersValidating.isUser = (req, res, next)=>{
             } 
         } else {
             res.status(401).json({
-                message: 'token not proveeded'
+                message: 'token not provided'
             });
         }
 

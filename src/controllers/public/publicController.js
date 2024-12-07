@@ -1,4 +1,4 @@
-const usersServices = require("../../services/users/usersServices");
+const publicServices = require("../../services/public/publicServices");
 const { ValidationError, ForeignKeyConstraintError } = require("sequelize");
 
 
@@ -14,14 +14,10 @@ publicController.login = async(req,res)=>{
 
     const { login } = req.body;
 
-
-
     try {
         
-        const token=await usersServices.login(login.email, login.password);
-        
         return res.status(200).json({
-            token
+            data: await publicServices.login(login.email, login.password)
         });
         
     } catch (error) {

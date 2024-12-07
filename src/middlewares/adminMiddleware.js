@@ -30,6 +30,7 @@ adminValidating.isAdmin = async (req, res, next)=>{
             const tokenDecoded = decode(token);
 
             if (await usersAdminServices.isAdmin(tokenDecoded.payload.id)) {
+                req.body.id=tokenDecoded.payload.id;
                 next();
             }
         }

@@ -80,6 +80,11 @@ module.exports=(sequelize, DataTypes) =>{
             foreignKey: 'flowcash_type_id'
         });
 
+        balance_period.belongsTo(models.users,{
+            as: "user",
+            foreignKey: 'user_id'
+        });
+
     }
 
     return balance_period;

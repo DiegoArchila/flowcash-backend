@@ -17,7 +17,7 @@ const flowcash_type =require("./flowcash/Flowcash_type");
 const flowcash =require("./flowcash/Flowcash");
 const reports =require("./flowcash/Reports");
 
-router.use(isUser); //Added layer for validation if is a user
+//router.use(isUser); //Added layer for validation if is a user, unmark for enable
 router.use(reports);
 router.use(operation_type);
 router.use(operation);
@@ -26,9 +26,11 @@ router.use(flowcash);
 
 /**[Admin]*/
 const adminRoutes = require("./admin/usersAdminRoutes");
+const balacenPeriodAdminRoutes = require("./admin/flowcash/balancePeriodAdminRoutes")
 
-router.use(isAdmin); //Added layer for validation if is a ADMIN
+//router.use(isAdmin); //Added layer for validation if is a ADMIN, unmark for enable
 router.use(adminRoutes);
+router.use(balacenPeriodAdminRoutes);
 
 /**[Users]*/
 // const userRoutes = require("./user/userRoutes");
