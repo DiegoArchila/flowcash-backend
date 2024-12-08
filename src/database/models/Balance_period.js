@@ -43,6 +43,16 @@ module.exports=(sequelize, DataTypes) =>{
             allowNull: false
         },
 
+        input:{
+            type:DataTypes.DECIMAL,
+            allowNull: false
+        },
+
+        output:{
+            type:DataTypes.DECIMAL,
+            allowNull: false
+        },
+
         balance:{
             type:DataTypes.DECIMAL,
             allowNull: false

@@ -43,16 +43,16 @@ balancePeriodAdminController.getAll = async (req, res) => {
 
     try {
         
-        const created=await balancePeriodAdminServices.findAll(
+        const result=await balancePeriodAdminServices.findAll(
             Number.parseInt(req.query?.page),
             Number.parseInt(req.query?.count)
         );
 
         
-        if(!created?.errors){
-            return res.status("201").json(created);
+        if(!result?.errors){
+            return res.status(200).json(result);
         }else{
-            return res.status(500).json(created);
+            return res.status(500).json(result);
         }
 
     } catch (error) {
@@ -61,6 +61,34 @@ balancePeriodAdminController.getAll = async (req, res) => {
         );
     }
 
-}
+};
+
+balancePeriodAdminController.findByBalanceDocument = async (req, res) => { 
+
+    try {
+        const found = await balancePeriodAdminServices.findByBalanceDocument(req.params.balance_document);
+
+        return res.status(200).json({
+            data:found
+        });
+             
+    } catch (error) {
+        console.error(
+            "An error is found while the system try find a flowcash_type field: \n", 
+            error
+        );
+
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                error:error.message
+            });
+        }
+
+        return res.status(500).json({
+            error:error.message
+        });
+    }
+
+};
 
 module.exports=balancePeriodAdminController;

@@ -20,6 +20,10 @@ reportsServices.getBalances= async()=>{
                 operation.id = flowcash.operation_id
             INNER JOIN operation_type ON
                 operation_type.id = operation.operation_type_id
+            WHERE flowcash.datetime > (
+                SELECT MAX(balance_period.datetime_end) 
+                FROM balance_period
+            )
             GROUP BY flowcashTypeId, flowcashTypeName, operationTypeName, is_sum
             ORDER BY flowcashTypeId, is_sum DESC;
         `,{

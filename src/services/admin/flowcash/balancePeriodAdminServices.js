@@ -107,14 +107,18 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
         }, {transaction});
 
         let tempBalance=Number.parseFloat(flowcash.balance);
+        let input=0;
+        let output=0;
 
         for (const movement of movements) {
 
             
             if(movement.operation.operation_type.is_sum){
                 tempBalance+=Number.parseFloat(movement.value);
+                input+=Number.parseFloat(movement.value);
             } else {
                 tempBalance-=Number.parseFloat(movement.value);
+                output+=Number.parseFloat(movement.value);
             }
             
             movement.balance_period_id = UUID;
@@ -129,6 +133,8 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
             name: flowcash.name,
             datetime_start: flowcash.datetime,
             datetime_end: datetime_end,
+            input: input,
+            output: output,
             balance: Number.parseFloat(tempBalance),
         }
 
@@ -138,6 +144,8 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
             flowcash_type_id: flowcash.id,
             datetime_start: flowcash.datetime,
             datetime_end: datetime_end,
+            input: Number.parseFloat(input),
+            output: Number.parseFloat(output),
             balance: Number.parseFloat(tempBalance),
             user_id: userId,
             notes: notes
@@ -160,12 +168,32 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
 };
 
 balancePeriodAdminServices.findAll = async (page, count) => {
-    return await db.balance_period.findAndCountAll({
+
+    return await db.balance_period.findAll({
+        attributes: ['balance_document', 'datetime_start', 'datetime_end'],
         limit: count,
         offset: (page-1) * count,
         order: [['datetime_start', 'DESC']],
-        group: 'balance_document'
-    })
-}
+        group: ['balance_document', 'datetime_start', 'datetime_end']
+    });
+
+};
+
+balancePeriodAdminServices.findByBalanceDocument = async (balance_document) => {
+    
+    const found = await db.balance_period.findAll({
+        where: {
+            balance_document: balance_document
+        }
+    });
+    
+    if (!found) {
+        throw new ValidationError(`the register with ID \"${id}\" it was not found`)
+    }
+
+    return found;
+};
+
+
 
 module.exports = balancePeriodAdminServices;
