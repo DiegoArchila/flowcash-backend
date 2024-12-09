@@ -65,18 +65,20 @@ balancePeriodAdminController.getAll = async (req, res) => {
 
 balancePeriodAdminController.findByBalanceDocument = async (req, res) => { 
 
+    const transaction = await db.sequelize.transaction();
+
     try {
-        const found = await balancePeriodAdminServices.findByBalanceDocument(req.params.balance_document);
+        const found = await balancePeriodAdminServices.findByBalanceDocument(req.params.balance_document, transaction);
+
+        await transaction.commit();
 
         return res.status(200).json({
             data:found
         });
              
     } catch (error) {
-        console.error(
-            "An error is found while the system try find a flowcash_type field: \n", 
-            error
-        );
+        
+        await transaction.rollback();
 
         if (error instanceof ValidationError) {
             return res.status(400).json({

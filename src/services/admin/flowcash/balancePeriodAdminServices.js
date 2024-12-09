@@ -179,19 +179,54 @@ balancePeriodAdminServices.findAll = async (page, count) => {
 
 };
 
-balancePeriodAdminServices.findByBalanceDocument = async (balance_document) => {
+balancePeriodAdminServices.findByBalanceDocument = async (balance_document, transaction) => {
     
-    const found = await db.balance_period.findAll({
+    const balances = await db.balance_period.findAll({
         where: {
             balance_document: balance_document
         }
-    });
+    }, {transaction});
     
-    if (!found) {
+    if (!balances) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)
     }
 
-    return found;
+    let balanceResult = [];
+
+    for (const balance of balances) {
+
+        //Parse the object sequealize
+        const balanceObject = balance.toJSON();
+       
+        balanceObject.movements = await db.flowcash.findAll({
+            attributes: { exclude: ['operation_id', 'flowcash_type_id', 'balance_period_id']},
+            include: [
+                {
+                    model: db.operation, 
+                    as: 'operation',
+                    attributes: { exclude: ['notes', 'operation_type_id'] },
+                    include: [
+                        {
+                            model: db.operation_type,
+                            as: 'operation_type',
+                            attributes: { exclude: ['notes'] },
+                        }
+                    ]
+                }
+            ],
+            where: {
+                balance_period_id: balance_document,
+                flowcash_type_id: balance.flowcash_type_id
+            },
+
+        }, {transaction});
+
+        balanceResult.push(balanceObject);
+        
+    }
+
+    return balanceResult;
+
 };
 
 
