@@ -17,7 +17,7 @@ const flowcash_type =require("./flowcash/Flowcash_type");
 const flowcash =require("./flowcash/Flowcash");
 const reports =require("./flowcash/Reports");
 
-//router.use(isUser); //Added layer for validation if is a user, unmark for enable
+router.use(isUser); //Added layer for validation if is a user, unmark for enable
 router.use(reports);
 router.use(operation_type);
 router.use(operation);
