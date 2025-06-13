@@ -79,78 +79,87 @@ flowcashServices.delete= async(id)=>{
         throw new Error(`Failed to delete the register with id ${id}`);
     } 
 };
-
 /**
  * Retrieves paginated flowcash records.
  * @param {number} [page] - The page number for pagination.
  * @param {number} [count] - The number of records per page.
  * @returns {Promise<Object>} Paginated flowcash records.
  */
-flowcashServices.getAlls= async(page, count)=>{
+flowcashServices.getAlls = async (page, count) => {
 
-    let results={};
+    let results = {};
+    let initialDate = null; // Variable para almacenar la fecha de partida final
 
-    //Variables for found the last dateInitial
-    let balancePeriodFlowcashType=[];
-    let balancePeriodFlowcash=[];
-
-
-    balancePeriodFlowcash = await db.balance_period.findAll({
+    // 1. Intentar encontrar la última fecha de balance_period
+    const balancePeriodFlowcash = await db.balance_period.findAll({
         attributes: ["datetime_end"],
-        limit:1,
+        limit: 1,
         order: [
             ['datetime_end', 'DESC']
         ]
     });
 
-    //If the balancePeriofFlowcash don't have anything, then we will search the last date in the flowcash_type
-    if (balancePeriodFlowcash.length===0) {
-        balancePeriodFlowcashType= await db.flowcash_type.findAll({
+    if (balancePeriodFlowcash.length > 0) {
+        initialDate = balancePeriodFlowcash[0].datetime_end;
+    } else {
+        // 2. Si no hay registros en balance_period, intentar en flowcash_type
+        const balancePeriodFlowcashType = await db.flowcash_type.findAll({
             attributes: ["datetime"],
-            limit:1,
+            limit: 1,
             order: [
                 ['datetime', 'DESC']
             ]
         });
+
+        if (balancePeriodFlowcashType.length > 0) {
+            initialDate = balancePeriodFlowcashType[0].datetime;
+        }
+        // Si initialDate sigue siendo null aquí, significa que ambas tablas están vacías.
+        // En este caso, no aplicaremos la cláusula 'where' de fecha, lo que recuperará todos los registros.
+    }
+
+    // Construir la cláusula 'where' dinámicamente
+    let whereClause = {};
+    if (initialDate) {
+        // Solo aplica la condición de fecha si se encontró una fecha de partida válida
+        whereClause.datetime = { [Op.gt]: initialDate };
     }
 
     if (page && count) {
-
         results = await db.flowcash.findAndCountAll(
             {
-                where: {
-                    datetime: {[Op.gt]: (balancePeriodFlowcash.length>0) ?
-                        balancePeriodFlowcash[0].datetime_end :
-                        balancePeriodFlowcashType[0].datetime
-                    }
-                },
-                limit: count,
-                offset: (page-1) * count,
+                where: whereClause, // Usa la cláusula 'where' construida dinámicamente
+                limit: parseInt(count), // Asegurarse que count sea un número entero
+                offset: (parseInt(page) - 1) * parseInt(count), // Asegurarse que page y count sean enteros
                 order: [
                     ['datetime', 'DESC']
                 ]
             }
         );
 
+        return {
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(results.count / count),
+            totalRow: results.count,
+            data: results.rows
+        }
+
     } else {
+        // Si no se proporcionan 'page' y 'count', se devuelve todo sin paginación.
+        // La cláusula whereClause sigue siendo aplicable aquí si quieres filtrar también.
+        // Si quieres que este else SIEMPRE devuelva TODO sin filtro de fecha,
+        // simplemente omite el 'where: whereClause'.
         results = await db.flowcash.findAndCountAll({
+                where: whereClause, // Omitir esta línea si quieres que este else SIEMPRE ignore la fecha de partida
                 order: [
                     ['datetime', 'DESC']
                 ]
         });
             return {
-                count: results.row,
-                data: results
+                count: results.count, // CORREGIDO: Usar results.count, no results.row
+                data: results.rows    // CORREGIDO: Devolver results.rows para los datos
             }
     }
-
-    return {
-        currentPage: parseInt(page), 
-        totalPages: Math.ceil(results.count / count), 
-        totalRow: results.count,
-        data: results.rows
-    }
-
 };
 
 /**
