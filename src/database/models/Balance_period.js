@@ -12,16 +12,13 @@ module.exports=(sequelize, DataTypes) =>{
     //Sets Columns
     const Columns = {
 
-        id:{
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false
-        },
-
+        //UUID for the balance document
+        //This is the primary key for the balance_period table
+        //It is used to identify the balance period document
         balance_document: {
             type: DataTypes.UUID,
-            allowNull: false            
+            allowNull: false,
+            primaryKey: true,            
         },
 
         flowcash_type_id:{
@@ -93,6 +90,11 @@ module.exports=(sequelize, DataTypes) =>{
         balance_period.belongsTo(models.users,{
             as: "user",
             foreignKey: 'user_id'
+        });
+
+        balance_period.hasMany(models.flowcash,{
+            as: "flowcashs",
+            foreignKey: "balance_period_id"
         });
 
     }
