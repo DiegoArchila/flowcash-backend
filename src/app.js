@@ -5,9 +5,15 @@
 // External Libraries
 const express = require("express");
 const app = express();
-const logger = require("morgan");
+const morgan = require("morgan");
 const dotenv = require('dotenv').config();
 const cors = require("cors");
+const logger = require("./config/logger.js");
+const path = require('path');
+
+// set the varible environment to the start
+const env = process.env.NODE_ENV || 'development';
+require('dotenv').config({ path: path.resolve(__dirname, `.env.${env}`) })
 
 // Internal Modules
 const routes=require("./routes");
@@ -16,16 +22,73 @@ const routes=require("./routes");
 /* INITIAL SETUP 
 -------------------------------------------------- */
 
-const PORT = process.env.APP_PORT || 3001;
+const PORT = process.env.APP_PORT || 3000;
 app.use(express.static("public"));
 require('dotenv').config();
+
+/* --------------------------------------------------
+/* ENVIRONMENT VARIABLES CONFIGURATION
+-------------------------------------------------- */
+
+/**
+ *  Set up environment-specific configurations.
+ *  In development, we log requests to the console.
+ *  In production, we set up CORS with allowed origins.
+ *  The allowed origins are defined for production to restrict access.
+ *  In development, we allow all origins.
+ */
+if (env === 'development') {
+
+  console.log('Running in development mode');
+
+} else if (env === 'production') {
+  
+  console.log('Running in production mode');
+
+  // Origins allowed in production
+  const allowedOrigins = [
+    'https://www.mabla.app',
+    'https://mabla.app',
+    'http://localhost:5173', // Local development
+  ];
+
+  app.use(cors({
+    
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  
+  }));
+}
+
+/**
+ *  Morgan is a middleware for logging HTTP requests.
+ *  It logs requests in different formats based on the environment.
+ */
+if (env === 'development') {
+  app.use(morgan('dev', {
+    stream: {
+      write: (message) => logger.http(message.trim())
+    }
+  }));
+  logger.debug('Morgan configured for development (dev format).');
+} else if (env === 'production') {
+  app.use(morgan('combined', {
+    stream: {
+      write: (message) => logger.http(message.trim())
+    }
+  }));
+  logger.info('Morgan configured for production (combined format).');
+}
+
+
 
 /* --------------------------------------------------
 /* MIDDLEWARE CONFIGURATION
 -------------------------------------------------- */
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(logger("dev"));
 app.use(cors({
 	origin: "https://www.mabla.app",
   credentials: true,
