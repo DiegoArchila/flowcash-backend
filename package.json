@@ -1,10 +1,12 @@
 {
-  "name": "flowcash-backend",
+  "name": "mabla-backend",
   "version": "1.0.0",
-  "description": "This project is for manages the flow cash for any entity",
+  "description": "This is the backend for the Mabla application, a personal finance management tool.",
   "main": "src/app.js",
   "scripts": {
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "start": "node ./src/app.js"
+
   },
   "repository": {
     "type": "git",
@@ -26,7 +28,8 @@
     "morgan": "^1.10.0",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.17.0"
+    "sequelize": "^6.17.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4",

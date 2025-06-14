@@ -1,1 +1,15 @@
+# Ignore node modules
 node_modules/
+
+# Ignore build output
+dist/
+build/
+
+# Ignore logs
+logs/
+
+# Ignore environment variables files
+.env
+.env.development
+.env.production
+.env.test
