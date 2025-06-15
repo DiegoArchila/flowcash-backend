@@ -3,17 +3,17 @@
 -------------------------------------------------- */
 
 // External Libraries
+const path = require('path');
+// set the varible environment to the start
+const env = process.env.NODE_ENV || 'development';
+require('dotenv').config({ path: path.resolve(__dirname, `../.env.${env}`) });
+
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const dotenv = require('dotenv').config();
 const cors = require("cors");
 const logger = require("./config/logger.js");
-const path = require('path');
 
-// set the varible environment to the start
-const env = process.env.NODE_ENV || 'development';
-require('dotenv').config({ path: path.resolve(__dirname, `.env.${env}`) })
 
 // Internal Modules
 const routes=require("./routes");
@@ -24,7 +24,6 @@ const routes=require("./routes");
 
 const PORT = process.env.APP_PORT || 3000;
 app.use(express.static("public"));
-require('dotenv').config();
 
 /* --------------------------------------------------
 /* ENVIRONMENT VARIABLES CONFIGURATION
@@ -47,8 +46,7 @@ if (env === 'development') {
 
   // Origins allowed in production
   const allowedOrigins = [
-    'https://www.mabla.app',
-    'https://mabla.app',
+    'https://www.mabla.app', // Production domain
     'http://localhost:5173', // Local development
   ];
 
@@ -106,6 +104,12 @@ app.use(routes);
 /* --------------------------------------------------
 /* START SERVER 
 -------------------------------------------------- */
+
+// --- Temporarily add this for debugging ---
+console.log('DEBUG: DB_USER in config.js:', process.env.DB_USER);
+console.log('DEBUG: DB_PORT in config.js:', process.env.DB_PORT);
+console.log('DEBUG: DB_HOST in config.js:', process.env.DB_HOST);
+// --- End temporary debugging ---
 
 app.listen(PORT, () => {
   console.log("Server running in port", PORT);
