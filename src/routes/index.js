@@ -24,19 +24,19 @@ router.use(operation);
 router.use(flowcash_type);
 router.use(flowcash);
 
+
+/**[Users]*/
+const userRoutes = require("./user/userRoutes");
+
+router.use(isUser) //Protect this section routes
+router.use(userRoutes);
+
 /**[Admin]*/
 const adminRoutes = require("./admin/usersAdminRoutes");
 const balacenPeriodAdminRoutes = require("./admin/flowcash/balancePeriodAdminRoutes")
 
-//router.use(isAdmin); //Added layer for validation if is a ADMIN, unmark for enable
+router.use(isAdmin); //Added layer for validation if is a ADMIN, unmark for enable
 router.use(adminRoutes);
 router.use(balacenPeriodAdminRoutes);
-
-/**[Users]*/
-// const userRoutes = require("./user/userRoutes");
-
-// router.use(isUser) //Protect this section routes
-// router.use(userRoutes);
-
 
 module.exports=router;

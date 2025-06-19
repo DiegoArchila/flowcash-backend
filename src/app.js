@@ -16,7 +16,7 @@ const logger = require("./config/logger.js");
 
 
 // Internal Modules
-const routes=require("./routes");
+const routes = require("./routes");
 
 /* --------------------------------------------------
 /* INITIAL SETUP 
@@ -39,24 +39,32 @@ app.use(express.static("public"));
 if (env === 'development') {
 
   console.log('Running in development mode');
+  
+  app.use(cors({
+
+    origin: '*', // Allow all origins in development
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+
+  }));
 
 } else if (env === 'production') {
-  
+
   console.log('Running in production mode');
 
   // Origins allowed in production
   const allowedOrigins = [
     'https://www.mabla.app', // Production domain
-    'http://localhost:5173', // Local development
   ];
 
   app.use(cors({
-    
+
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
-  
+
   }));
 }
 
@@ -87,12 +95,6 @@ if (env === 'development') {
 -------------------------------------------------- */
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors({
-	origin: "https://www.mabla.app",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
 
 /* --------------------------------------------------
 /* ROUTE HANDLING
@@ -104,12 +106,6 @@ app.use(routes);
 /* --------------------------------------------------
 /* START SERVER 
 -------------------------------------------------- */
-
-// --- Temporarily add this for debugging ---
-console.log('DEBUG: DB_USER in config.js:', process.env.DB_USER);
-console.log('DEBUG: DB_PORT in config.js:', process.env.DB_PORT);
-console.log('DEBUG: DB_HOST in config.js:', process.env.DB_HOST);
-// --- End temporary debugging ---
 
 app.listen(PORT, () => {
   console.log("Server running in port", PORT);

@@ -84,85 +84,87 @@ flowcashServices.delete = async (id) => {
 
 /**
  * Retrieves paginated flowcash records.
+ * If no balance_period exists, it falls back to flowcash_type or epoch start.
  * @param {number} [page] - The page number for pagination.
  * @param {number} [count] - The number of records per page.
  * @returns {Promise<Object>} Paginated flowcash records.
  */
 flowcashServices.getAlls = async (page, count) => {
-
     let results = {};
 
-    //Variables for found the last dateInitial
-    let balancePeriodFlowcashType = [];
-    let balancePeriodFlowcash = [];
-
-
-    balancePeriodFlowcash = await db.balance_period.findAll({
-        attributes: ["datetime_end"],
+    // Get latest datetime_end from balance_period
+    const balancePeriodFlowcash = await db.balance_period.findAll({
+        attributes: ['datetime_end'],
         limit: 1,
-        order: [
-            ['datetime_end', 'DESC']
-        ]
+        order: [['datetime_end', 'DESC']]
     });
 
-    //If the balancePeriofFlowcash don't have anything, then we will search the last date in the flowcash_type
+    let referenceDate;
+
     if (balancePeriodFlowcash.length === 0) {
-        balancePeriodFlowcashType = await db.flowcash_type.findAll({
-            attributes: ["datetime"],
+        // If no records in balance_period, fallback to latest datetime in flowcash_type
+        const balancePeriodFlowcashType = await db.flowcash_type.findAll({
+            attributes: ['datetime'],
             limit: 1,
-            order: [
-                ['datetime', 'DESC']
-            ]
+            order: [['datetime', 'DESC']]
         });
 
-        // If the balancePeriodFlowcashType don't have anything, then we will search the last date in the flowcash
+        referenceDate = balancePeriodFlowcashType.length > 0
+            ? balancePeriodFlowcashType[0].datetime
+            : new Date(0); // Epoch fallback
+
+        const allResults = await db.flowcash.findAndCountAll({
+            where: {
+                datetime: {
+                    [Op.gt]: referenceDate
+                }
+            },
+            order: [['datetime', 'DESC']]
+        });
+
+        return {
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(allResults.count / count),
+            totalRow: allResults.count,
+            data: allResults.rows
+        };
+    }
+
+    // If balance_period found, use its datetime_end
+    referenceDate = balancePeriodFlowcash[0].datetime_end;
+
+    // If page and count are provided, apply pagination
+    if (page && count) {
+        results = await db.flowcash.findAndCountAll({
+            where: {
+                datetime: {
+                    [Op.gt]: referenceDate
+                }
+            },
+            limit: count,
+            offset: (page - 1) * count,
+            order: [['datetime', 'DESC']]
+        });
+
         return {
             currentPage: parseInt(page),
             totalPages: Math.ceil(results.count / count),
             totalRow: results.count,
             data: results.rows
-        }
+        };
     }
 
-    if (page && count) {
-
-        results = await db.flowcash.findAndCountAll(
-            {
-                where: {
-                    datetime: {
-                        [Op.gt]: (balancePeriodFlowcash.length > 0) ?
-                            balancePeriodFlowcash[0].datetime_end :
-                            balancePeriodFlowcashType[0].datetime
-                    }
-                },
-                limit: count,
-                offset: (page - 1) * count,
-                order: [
-                    ['datetime', 'DESC']
-                ]
-            }
-        );
-
-    } else {
-        results = await db.flowcash.findAndCountAll({
-            order: [
-                ['datetime', 'DESC']
-            ]
-        });
-        return {
-            count: results.row,
-            data: results
-        }
-    }
+    // If no pagination, return all ordered data
+    results = await db.flowcash.findAndCountAll({
+        order: [['datetime', 'DESC']]
+    });
 
     return {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(results.count / count),
-        totalRow: results.count,
+        count: results.count,
         data: results.rows
-    }
-
+    };
 };
+
 
 /**
  * Finds a flowcash record by its ID.
