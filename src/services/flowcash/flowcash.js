@@ -90,6 +90,7 @@ flowcashServices.delete = async (id) => {
  * @returns {Promise<Object>} Paginated flowcash records.
  */
 flowcashServices.getAlls = async (page, count) => {
+    
     let results = {};
     let referenceDate;
 
@@ -100,22 +101,21 @@ flowcashServices.getAlls = async (page, count) => {
         order: [['datetime_end', 'DESC']]
     });
 
-    // 2. check if balancePeriodFlowcash is empty, if so, we get the last datetime from flowcash_type
-    if (balancePeriodFlowcash.length === 0) {
-        const balancePeriodFlowcashType = await db.flowcash_type.findAll({
-            attributes: ['datetime'],
-            limit: 1,
-            order: [['datetime', 'DESC']]
-        });
+    referenceDate = balancePeriodFlowcash.length > 0
+        ? balancePeriodFlowcash[0].datetime
+        : new Date(0); // Fallback: 1970-01-01
 
-        referenceDate = balancePeriodFlowcashType.length > 0
-            ? balancePeriodFlowcashType[0].datetime
-            : new Date(0); // Fallback: 1970-01-01
-    } else {
-        referenceDate = balancePeriodFlowcash[0].datetime_end;
-    }
+    results = await db.flowcash.findAndCountAll({
+        where: {
+            datetime: {
+                [Op.gt]: referenceDate
+            }
+        },
+        order: [['datetime', 'DESC']]
+    });
 
-    // 3. If page and count are provided, paginate the results
+
+    // 2. If page and count are provided, paginate the results
     if (page && count) {
         results = await db.flowcash.findAndCountAll({
             where: {
@@ -136,7 +136,7 @@ flowcashServices.getAlls = async (page, count) => {
         };
     }
 
-    // 4. If no pagination parameters are provided, return all records after the reference date
+    // 3. If no pagination parameters are provided, return all records after the reference date
     results = await db.flowcash.findAndCountAll({
         where: {
             datetime: {
