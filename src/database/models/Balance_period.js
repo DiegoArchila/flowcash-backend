@@ -21,6 +21,7 @@ module.exports=(sequelize, DataTypes) =>{
             primaryKey: true,            
         },
 
+        
         flowcash_type_id:{
             type: DataTypes.SMALLINT,
             allowNull: false,

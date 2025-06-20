@@ -56,37 +56,36 @@ async function isEmptymovements(transaction) {
  * @memberof balancePeriodAdminServices
  * @param {number} userId - The ID of the user creating the balance period.
  * @param {string} notes - Notes associated with the balance period.
+ * @param {import("sequelize").Transaction} transaction - Sequelize transaction instance.
  * @returns {Promise<Object[]>} A list of balance results for each flowcash.
  * @throws {Error} If there are no movements to process or database operations fail.
  */
 balancePeriodAdminServices.create = async (userId, notes, transaction) => {
-
     if (!userId) {
-        throw new Error("error: not user found");        
+        throw new Error("Error: No user found");
     }
 
-    //Eval if doestn't have any movement    
+    // Check if there are any movements
     await isEmptymovements(transaction);
 
-    const datetime_end= new Date(Date.now()).toISOString();
+    const datetime_end = new Date().toISOString();
 
-    //obtain the flowcashs
+    // Obtener los tipos de flowcash
     const flowcashs = await db.flowcash_type.findAll({
-        attributes: ['id', 'name', 'datetime', 'balance']
-    }, {transaction});
-
-    //generate the UUID for the balance_document
-    const UUID = crypto.randomUUID();
+        attributes: ['id', 'name', 'datetime', 'balance'],
+        transaction
+    });
 
     const movementsPerFlowcash = [];
 
     for (const flowcash of flowcashs) {
+        const UUID = crypto.randomUUID();
 
-        let movements = await db.flowcash.findAll({
+        const movements = await db.flowcash.findAll({
             attributes: ['id', 'datetime', 'flowcash_type_id', 'value'],
             where: {
-                flowcash_type_id: { [Op.eq]: flowcash.id },
-                datetime: { [Op.gt]: flowcash.datetime },
+                flowcash_type_id: flowcash.id,
+                datetime: { [Op.gt]: flowcash.datetime }
             },
             include: [
                 {
@@ -101,33 +100,52 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
                         }
                     ]
                 }
-            ]
+            ],
+            transaction
+        });
 
-            
-        }, {transaction});
-
-        let tempBalance=Number.parseFloat(flowcash.balance);
-        let input=0;
-        let output=0;
+        let tempBalance = parseFloat(flowcash.balance);
+        let input = 0;
+        let output = 0;
 
         for (const movement of movements) {
+            const value = parseFloat(movement.value);
 
-            
-            if(movement.operation.operation_type.is_sum){
-                tempBalance+=Number.parseFloat(movement.value);
-                input+=Number.parseFloat(movement.value);
+            if (movement.operation.operation_type.is_sum) {
+                tempBalance += value;
+                input += value;
             } else {
-                tempBalance-=Number.parseFloat(movement.value);
-                output+=Number.parseFloat(movement.value);
+                tempBalance -= value;
+                output += value;
             }
-            
-            movement.balance_period_id = UUID;
-            
-            await movement.save({transaction});
-            
         }
-        
-        let result = {
+
+        // Crear primero el balance_period (requerido por FK)
+        await db.balance_period.create({
+            balance_document: UUID,
+            flowcash_type_id: flowcash.id,
+            datetime_start: flowcash.datetime,
+            datetime_end: datetime_end,
+            input: input,
+            output: output,
+            balance: tempBalance,
+            user_id: userId,
+            notes: notes
+        }, { transaction });
+
+        // Luego actualizar movimientos con el balance_period_id
+        for (const movement of movements) {
+            movement.balance_period_id = UUID;
+            await movement.save({ transaction });
+        }
+
+        // Actualizar balance y datetime en flowcash_type
+        flowcash.balance = tempBalance;
+        flowcash.datetime = datetime_end;
+        await flowcash.save({ transaction });
+
+        // Resultado acumulado
+        movementsPerFlowcash.push({
             document_balance_id: UUID,
             Flowcash_id: flowcash.id,
             name: flowcash.name,
@@ -135,37 +153,14 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
             datetime_end: datetime_end,
             input: input,
             output: output,
-            balance: Number.parseFloat(tempBalance),
-        }
-
-
-        await db.balance_period.create({
-            balance_document: UUID,
-            flowcash_type_id: flowcash.id,
-            datetime_start: flowcash.datetime,
-            datetime_end: datetime_end,
-            input: Number.parseFloat(input),
-            output: Number.parseFloat(output),
-            balance: Number.parseFloat(tempBalance),
-            user_id: userId,
-            notes: notes
-        }, {transaction});
-
-
-        //Update the balance and the datetime in table flowcash_type
-        flowcash.balance = Number.parseFloat(tempBalance);
-        flowcash.datetime = datetime_end;
-
-        await flowcash.save({transaction});
-
-        movementsPerFlowcash.push(result);
-
+            balance: tempBalance,
+        });
     }
 
-
     return movementsPerFlowcash;
-
 };
+
+
 
 balancePeriodAdminServices.findAll = async (page, count) => {
 
