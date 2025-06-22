@@ -101,7 +101,6 @@ flowcashServices.getAlls = async (page, count) => {
         order: [['datetime_end', 'DESC']]
     });
 
-    console.log("Balance Period Flowcash: ", balancePeriodFlowcash[0].datetime_end);
 
     referenceDate = balancePeriodFlowcash.length > 0
         ? balancePeriodFlowcash[0].datetime_end
@@ -117,8 +116,6 @@ flowcashServices.getAlls = async (page, count) => {
         order: [['datetime', 'DESC']]
     });
 
-    console.log("Results: ", results);
-
     // 2. If page and count are provided, paginate the results
     if (page && count) {
         results = await db.flowcash.findAndCountAll({
@@ -131,6 +128,8 @@ flowcashServices.getAlls = async (page, count) => {
             offset: (page - 1) * count,
             order: [['datetime', 'DESC']]
         });
+
+        console.log("Results found in flowcashServices.getAlls: ", results);
 
         return {
             currentPage: parseInt(page),

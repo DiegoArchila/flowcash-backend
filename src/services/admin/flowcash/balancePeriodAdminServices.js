@@ -18,7 +18,7 @@ async function getDatime_start(transaction) {
         attributes: ['datetime'],
         order: [['datetime', 'DESC']],
         limit: 1
-    }, {transaction})
+    }, { transaction })
 
     return datetime_start[0].datetime;
 
@@ -37,11 +37,11 @@ async function isEmptymovements(transaction) {
     const isEmptyMovements = await db.flowcash.findAll({
         attributes: ['datetime'],
         where: {
-            datetime: {[Op.gt]: await getDatime_start(transaction)}
+            datetime: { [Op.gt]: await getDatime_start(transaction) }
         }
-    }, {transaction});
+    }, { transaction });
 
-    if (isEmptyMovements.length ===0) {
+    if (isEmptyMovements.length === 0) {
         throw new Error("error: doesn't have any movement, please add for allow continue.")
     }
 
@@ -164,24 +164,32 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
 
 balancePeriodAdminServices.findAll = async (page, count) => {
 
-    return await db.balance_period.findAll({
+    const results = await db.balance_period.findAndCountAll({
         attributes: ['balance_document', 'datetime_start', 'datetime_end'],
         limit: count,
-        offset: (page-1) * count,
+        offset: (page - 1) * count,
         order: [['datetime_start', 'DESC']],
-        group: ['balance_document', 'datetime_start', 'datetime_end']
+        //group: ['balance_document', 'datetime_start', 'datetime_end']
     });
 
+    console.log("Results found in balancePeriodAdminServices: ", results);
+
+    return {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(results.count / count),
+        totalRow: results.count,
+        data: results.rows
+    };
 };
 
 balancePeriodAdminServices.findByBalanceDocument = async (balance_document, transaction) => {
-    
+
     const balances = await db.balance_period.findAll({
         where: {
             balance_document: balance_document
         }
-    }, {transaction});
-    
+    }, { transaction });
+
     if (!balances) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)
     }
@@ -192,12 +200,12 @@ balancePeriodAdminServices.findByBalanceDocument = async (balance_document, tran
 
         //Parse the object sequealize
         const balanceObject = balance.toJSON();
-       
+
         balanceObject.movements = await db.flowcash.findAll({
-            attributes: { exclude: ['operation_id', 'flowcash_type_id', 'balance_period_id']},
+            attributes: { exclude: ['operation_id', 'flowcash_type_id', 'balance_period_id'] },
             include: [
                 {
-                    model: db.operation, 
+                    model: db.operation,
                     as: 'operation',
                     attributes: { exclude: ['notes', 'operation_type_id'] },
                     include: [
@@ -214,10 +222,10 @@ balancePeriodAdminServices.findByBalanceDocument = async (balance_document, tran
                 flowcash_type_id: balance.flowcash_type_id
             },
 
-        }, {transaction});
+        }, { transaction });
 
         balanceResult.push(balanceObject);
-        
+
     }
 
     return balanceResult;
