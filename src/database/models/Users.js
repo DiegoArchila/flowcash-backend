@@ -120,6 +120,15 @@ module.exports=(sequelize, DataTypes) =>{
             foreignKey: "role_id"
         });
 
+        Users.hasMany(models.balance_period, {
+            as: "balances_periods",
+            foreignKey: "user_id"
+        });
+
+        // Users.belongsTo(models.balance_period, {
+        //     as: "balances_periods",
+        //     foreignKey: 
+        // });
     }
 
     return Users;

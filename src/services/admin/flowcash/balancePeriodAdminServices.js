@@ -1,4 +1,4 @@
-const { ValidationError, where, Op } = require("sequelize");
+const { ValidationError, where, Op, fn, col } = require("sequelize");
 const db = require("../../../database/models");
 
 const balancePeriodAdminServices = {};
@@ -163,24 +163,35 @@ balancePeriodAdminServices.create = async (userId, notes, transaction) => {
 
 
 balancePeriodAdminServices.findAll = async (page, count) => {
-
     const results = await db.balance_period.findAndCountAll({
-        attributes: ['balance_document', 'datetime_start', 'datetime_end'],
+        attributes: [
+            'datetime_start',
+            'datetime_end',
+            [fn('SUM', col('input')), 'input'],
+            [fn('SUM', col('output')), 'output'],
+            [fn('SUM', col('balance')), 'balance'],
+        ],
         limit: count,
         offset: (page - 1) * count,
-        order: [['datetime_start', 'DESC']],
-        //group: ['balance_document', 'datetime_start', 'datetime_end']
+        order: [['datetime_end', 'DESC']],
+        group: [
+            'datetime_start',
+            'datetime_end',
+        ]
     });
 
-    console.log("Results found in balancePeriodAdminServices: ", results);
+    const totalRow = Array.isArray(results.count)
+        ? results.count.length
+        : results.count;
 
     return {
         currentPage: parseInt(page),
-        totalPages: Math.ceil(results.count / count),
-        totalRow: results.count,
+        totalPages: Math.ceil(totalRow / count),
+        totalRow,
         data: results.rows
     };
 };
+
 
 balancePeriodAdminServices.findByBalanceDocument = async (balance_document, transaction) => {
 

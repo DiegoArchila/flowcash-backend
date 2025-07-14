@@ -1,0 +1,75 @@
+version: "3.8"
+services:
+
+  #Settings POSTGRESQL
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    networks:
+      - net_mabla
+    restart: on-failure
+    ports:
+      - ${DATABASE_EXPORT_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_USER_PASSWORD}
+      LANG: en_US.utf8
+      # LC_COLLATE: es_CO.utf8
+      # LC_CTYPE: es_CO.utf8
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pg-data:/var/lib/postgresql/data
+
+# Settings PgAdmin4
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:latest
+    networks:
+      - net_mabla
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_SERVER_JSON_FILE: ${PGADMIN_SERVER_JSON_FILE}
+      #NOTE: If you have errors on the time the connection, please
+      # check "Gateway" and "IPAddress" from id container Postgresql and
+      # change the profile in Pgadmin4 for connect to database
+      # Command : docker inspect {postgres image name or id}
+    user: root
+    ports:
+      - ${PGADMIN_EXPORT_DOCKER_PORT}:${PGADMIN_LISTEN_PORT}
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin4/servers.json:/pgadmin4/servers.json
+
+# Settings Jenkins
+  # jenkins:
+  #   container_name: jenkins
+  #   image: jenkins/jenkins:lts-jdk17
+  #   networks:
+  #     - net_mabla
+  #   restart: on-failure
+  #   privileged: true
+  #   user: root
+  #   ports:
+  #     - ${JENKINS_PORT_EXPOSE_WEB}:${JENKINS_PORT_LISTEN_WEB}
+  #     - ${JENKINS_PORT_EXPOSE_API}:${JENKINS_PORT_LISTEN_API}
+  #   volumes:
+  #     - jenkins-data:/var/jenkins_home
+
+networks:
+  net_mabla:
+    driver: bridge
+    
+volumes:
+  # jenkins-data:
+  pg-data:
