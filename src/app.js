@@ -6,7 +6,14 @@
 const path = require('path');
 // set the varible environment to the start
 const env = process.env.NODE_ENV || 'development';
-require('dotenv').config({ path: path.resolve(__dirname, `../.env.${env}`) });
+
+if (env === 'production') {
+  
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+} else {
+  
+  require('dotenv').config({ path: path.resolve(__dirname, `../.env.${env}`) });
+}
 
 const express = require("express");
 const app = express();
