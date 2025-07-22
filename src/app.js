@@ -35,6 +35,7 @@ app.use(express.static("public"));
 /* --------------------------------------------------
 /* ENVIRONMENT VARIABLES CONFIGURATION
 -------------------------------------------------- */
+const allowedOrigins = process.env.APP_CORS ? process.env.APP_CORS.split(',') : [];
 
 /**
  *  Set up environment-specific configurations.
@@ -47,7 +48,6 @@ if (env === 'development') {
 
   console.log('Running in development mode');
 
-  const allowedOrigins = process.env.APP_CORS ? process.env.APP_CORS.split(',') : [];
   
   app.use(cors({
 
