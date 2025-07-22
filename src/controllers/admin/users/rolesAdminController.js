@@ -106,6 +106,7 @@ rolesAdminController.getAlls = async(req,res)=>{
             Number.parseInt(req.query?.count)
         );
 
+        console.log("RolesAdminController.getAlls: ", results);
         return res.status(200).json(results);
     } catch (error) {
         
@@ -113,6 +114,7 @@ rolesAdminController.getAlls = async(req,res)=>{
             "An error is found while the system try find all data: \n", 
             error
         );
+
         
         return res.status(500).json({
             error:error.message

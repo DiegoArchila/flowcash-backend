@@ -47,11 +47,11 @@ if (env === 'development') {
 
   console.log('Running in development mode');
 
-  const allowedOrigins = process.env.APP_CORS ? process.env.APP_CORS_DEV.split(',') : [];
+  const allowedOrigins = process.env.APP_CORS ? process.env.APP_CORS.split(',') : [];
   
   app.use(cors({
 
-    origin: process.env.APP_CORS ? process.env.APP_CORS_DEV.split(',') : [], // Allow all origins in development
+    origin: allowedOrigins,// Allow all origins in development
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
@@ -61,9 +61,6 @@ if (env === 'development') {
 } else if (env === 'production') {
 
   console.log('Running in production mode');
-
-  // Origins allowed in production
-  const allowedOrigins = process.env.APP_CORS ? process.env.APP_CORS.split(',') : [];
 
   app.use(cors({
 
