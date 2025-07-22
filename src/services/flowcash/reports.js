@@ -28,7 +28,9 @@ reportsServices.getBalances= async()=>{
             ORDER BY flowcashTypeId, is_sum DESC;
         `,{
             type: db.sequelize.QueryTypes.SELECT
-        })
+        });
+
+        console.log("reportsServices.getBalances: ", response);
 
         return response;
 };
