@@ -42,10 +42,12 @@ db.Sequelize = Sequelize;
 
 
 /** Auto Update */
-// sequelize.sync({
-//   force: true, // Cambia a true si quieres reiniciar por completo la base de datos
-//   alter: false // Cambia a force: true si quieres reiniciar por completo
-// }).then(async () => {
+sequelize.sync({
+  force: false, // Cambia a true si quieres reiniciar por completo la base de datos
+  alter: false // Cambia a force: true si quieres reiniciar por completo
+});
+
+//.then(async () => {
 
 //   await db.operation_type.bulkCreate([
 //     { type: "ingreso", is_sum: true, notes: null },
