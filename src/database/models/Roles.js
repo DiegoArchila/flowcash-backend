@@ -35,7 +35,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "roles",
-        timestamps: false
+        timestamps: true
     }
 
     // Assignation

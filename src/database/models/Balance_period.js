@@ -15,13 +15,12 @@ module.exports=(sequelize, DataTypes) =>{
         //UUID for the balance document
         //This is the primary key for the balance_period table
         //It is used to identify the balance period document
-        balance_document: {
+        id: {
             type: DataTypes.UUID,
             allowNull: false,
             primaryKey: true,            
         },
 
-        
         flowcash_type_id:{
             type: DataTypes.SMALLINT,
             allowNull: false,
@@ -31,16 +30,6 @@ module.exports=(sequelize, DataTypes) =>{
             }
         },
         
-        datetime_start:{
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        
-        datetime_end:{
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-
         input:{
             type:DataTypes.DECIMAL,
             allowNull: false
@@ -55,12 +44,11 @@ module.exports=(sequelize, DataTypes) =>{
             type:DataTypes.DECIMAL,
             allowNull: false
         },
-
-        user_id:{
+        report_balance_period_id: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
             references: {
-                model: 'users',
+                model: 'reports_balances_periods',
                 key: 'id'
             }
         },
@@ -87,10 +75,9 @@ module.exports=(sequelize, DataTypes) =>{
             as: "flowcash_types",
             foreignKey: 'flowcash_type_id'
         });
-
-        balance_period.belongsTo(models.users,{
-            as: "user",
-            foreignKey: 'user_id'
+        balance_period.belongsTo(models.reports_balances_periods,{
+            as: "report_balance_period",
+            foreignKey: 'report_balance_period_id'
         });
 
         balance_period.hasMany(models.flowcash,{

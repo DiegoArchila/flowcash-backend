@@ -74,7 +74,7 @@ module.exports=(sequelize, DataTypes) =>{
             allowNull: false,
         },
 
-        isActive: {
+        is_active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,
             allowNull: false
@@ -91,7 +91,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "users",
-        timestamps: false,
+        timestamps: true,
         indexes: [
             {
                 unique: true,
@@ -120,15 +120,18 @@ module.exports=(sequelize, DataTypes) =>{
             foreignKey: "role_id"
         });
 
-        Users.hasMany(models.balance_period, {
-            as: "balances_periods",
+        Users.hasMany(models.reports_balances_periods, {
+            as: "reports_balances_periods",
             foreignKey: "user_id"
         });
 
-        // Users.belongsTo(models.balance_period, {
-        //     as: "balances_periods",
-        //     foreignKey: 
-        // });
+        Users.hasMany(models.flowcash,{
+            as: "flowcashs_movements",
+            foreignKey: "user_id"
+        });
+
+
+
     }
 
     return Users;

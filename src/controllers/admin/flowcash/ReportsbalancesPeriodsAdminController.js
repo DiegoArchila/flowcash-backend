@@ -1,4 +1,4 @@
-const balancePeriodAdminServices = require("../../../services/admin/flowcash/balancePeriodAdminServices");
+const ReportbalancesPeriodsAdminServices = require("../../../services/admin/flowcash/ReportsbalancesPeriodsAdminServices");
 const { ValidationError, ForeignKeyConstraintError } = require("sequelize");
 const db = require("../../../database/models");
 
@@ -17,7 +17,7 @@ balancePeriodAdminController.create = async(req,res)=>{
 
     try {
         
-        const created=await balancePeriodAdminServices.create(
+        const created=await ReportbalancesPeriodsAdminServices.create(
             req.body.id, 
             req.body.notes || null, 
             transaction);
@@ -42,8 +42,8 @@ balancePeriodAdminController.create = async(req,res)=>{
 balancePeriodAdminController.getAll = async (req, res) => {
 
     try {
-        
-        const result=await balancePeriodAdminServices.findAll(
+
+        const result=await ReportbalancesPeriodsAdminServices.findAll(
             Number.parseInt(req.query?.page),
             Number.parseInt(req.query?.count)
         );
@@ -68,7 +68,7 @@ balancePeriodAdminController.findByBalanceDocument = async (req, res) => {
     const transaction = await db.sequelize.transaction();
 
     try {
-        const found = await balancePeriodAdminServices.findByBalanceDocument(req.params.balance_document, transaction);
+        const found = await ReportbalancesPeriodsAdminServices.findByBalanceDocument(req.params.balance_document, transaction);
 
         await transaction.commit();
 

@@ -33,7 +33,7 @@ router.use(userRoutes);
 
 /**[Admin]*/
 const adminRoutes = require("./admin/usersAdminRoutes");
-const balacenPeriodAdminRoutes = require("./admin/flowcash/balancePeriodAdminRoutes")
+const balacenPeriodAdminRoutes = require("./admin/flowcash/ReportsbalancesPeriodsAdminRoutes");
 
 router.use(isAdmin); //Added layer for validation if is a ADMIN, unmark for enable
 router.use(adminRoutes);

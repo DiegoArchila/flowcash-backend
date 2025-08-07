@@ -14,19 +14,18 @@ controllerFlowcash.create = async(req,res)=>{
 
     try {
         
-        const created=await servicesFlowcash.create(req.body.NewFlowcash);
-        
-        if(!created?.errors){
-            return res.status("201").json(created);
-        }else{
-            return res.status(500).json(created);
-        }
+        await servicesFlowcash.create(req.body.NewFlowcash, req.user);
+
+        return res.status(201).send({
+            message: "The register has been created successfuly"
+        });
     } catch (error) {
         console.log("An error in found while is creating the register:\n", error);
         return res.status(500).send(error.errors || error);
     }
 
 };
+
 
 /**
  * Update a flowcash
@@ -102,11 +101,11 @@ controllerFlowcash.delete = async(req,res)=>{
  * @param {import("express").Response} res
  * @returns {Promise<any>}
  */
-controllerFlowcash.getAlls = async(req,res)=>{
+controllerFlowcash.getAllsCurrentPeriod = async(req,res)=>{
 
     try {
         
-        const results = await servicesFlowcash.getAlls(
+        const results = await servicesFlowcash.getAllsCurrentPeriod(
             Number.parseInt(req.query?.page),
             Number.parseInt(req.query?.count)
         );

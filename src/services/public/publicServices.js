@@ -23,7 +23,8 @@ publicServices.login = async (email, password) => {
             email: { [Op.iLike]: email }
         },
 
-        attributes: ['id', 'email', 'password', 'username', 'isActive'],
+        attributes: ['id', 'email', 'password', 'username', 'is_active'],
+        
         include: [
             { model: db.roles, as: 'role' }
         ]
@@ -31,7 +32,7 @@ publicServices.login = async (email, password) => {
 
     if (await encrypt.verify(user.password, password)) {
 
-        if (!user.isActive) {
+        if (!user.is_active) {
             throw new Error("Error: user is not allowed for login");
         }
 

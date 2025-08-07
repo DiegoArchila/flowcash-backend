@@ -8,6 +8,6 @@ router
     .post("/api/flowcash/:id/update", controllerFlowcash.update)
     .delete("/api/flowcash/:id/delete", controllerFlowcash.delete)
     .get("/api/flowcash/:id", controllerFlowcash.findById)
-    .get("/api/flowcash/", controllerFlowcash.getAlls);
+    .get("/api/flowcash/", controllerFlowcash.getAllsCurrentPeriod);
 
 module.exports=router;

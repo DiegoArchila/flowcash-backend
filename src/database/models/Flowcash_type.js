@@ -45,7 +45,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "flowcash_type",
-        timestamps: false,
+        timestamps: true,
     }
 
     // Assignation

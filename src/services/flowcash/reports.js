@@ -21,16 +21,14 @@ reportsServices.getBalances= async()=>{
             INNER JOIN operation_type ON
                 operation_type.id = operation.operation_type_id
             WHERE flowcash.datetime > (
-                SELECT MAX(balance_period.datetime_end) 
-                FROM balance_period
+                SELECT COALESCE(MAX(reports_balances_periods.datetime_end), '1970-01-01')
+                FROM reports_balances_periods
             )
             GROUP BY flowcashTypeId, flowcashTypeName, operationTypeName, is_sum
             ORDER BY flowcashTypeId, is_sum DESC;
         `,{
             type: db.sequelize.QueryTypes.SELECT
         });
-
-        console.log("reportsServices.getBalances: ", response);
 
         return response;
 };

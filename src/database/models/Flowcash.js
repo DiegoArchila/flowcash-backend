@@ -49,6 +49,15 @@ module.exports=(sequelize, DataTypes) =>{
         balance_period_id: {
             type: DataTypes.UUID,
             allowNull: true
+        },
+
+        user_id:{
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: "users",
+                key: "id"
+            }
         }
     };
 
@@ -78,6 +87,11 @@ module.exports=(sequelize, DataTypes) =>{
         flowcash.belongsTo(models.balance_period,{
             as: "balance_period",
             foreignKey: "balance_period_id"
+        });
+
+        flowcash.belongsTo(models.users,{
+            as: "user",
+            foreignKey: "user_id"
         });
 
     }

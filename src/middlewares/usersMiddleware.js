@@ -1,4 +1,4 @@
-const { verify } = require("../utils/jwt");
+const { verify, decode } = require("../utils/jwt");
 
 const usersValidating = {};
 
@@ -26,6 +26,13 @@ usersValidating.isUser = (req, res, next)=>{
             const token = authorization.split(' ')[1];
     
             if (verify(token)){
+
+                const {payload} = decode(token);
+                if (!payload || !payload.id) {
+                    throw new Error('invalid token');
+                }
+
+                req.user = payload.id;
                 next();
             } 
         } else {

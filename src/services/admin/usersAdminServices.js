@@ -64,7 +64,7 @@ usersAdminServices.update = async (updateUser, id) => {
     user.role_id = updateUser.role_id;
     user.username = updateUser.username;
     user.email = updateUser.email;
-    user.isActive = updateUser.isActive;
+    user.is_Active = updateUser.is_active;
     user.notes = updateUser.notes;
 
     const updated = await user.save();
@@ -127,7 +127,7 @@ usersAdminServices.getAlls = async (page, count) => {
 
         results = await db.users.findAndCountAll(
             {
-                attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'isActive', 'notes'],
+                attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'is_active', 'notes'],
                 include: [
                     { model: db.dnitypes, as: 'dnitype' },
                     { model: db.roles, as: 'role' }
@@ -142,7 +142,7 @@ usersAdminServices.getAlls = async (page, count) => {
 
     } else {
         results = await db.users.findAndCountAll({
-            attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'isActive', 'notes'],
+            attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'is_active', 'notes'],
             include: [
                 { model: db.dnitypes, as: 'dnitype' },
                 { model: db.roles, as: 'role' }
@@ -181,7 +181,7 @@ usersAdminServices.getAlls = async (page, count) => {
 usersAdminServices.findById = async (id) => {
 
     const found = await db.users.findByPk(id, {
-        attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'isActive', 'notes'],
+        attributes: ['id', 'names', 'dnitype_id', 'dninumber', 'role_id', 'username', 'email', 'is_active', 'notes'],
         include: [
             { model: db.dnitypes, as: 'dnitype' },
             { model: db.roles, as: 'role' }
@@ -213,7 +213,7 @@ usersAdminServices.findById = async (id) => {
 usersAdminServices.isAdmin = async (id) => {
 
     const found = await db.users.findByPk(id, {
-        attributes: ['id', 'names', 'role_id', 'isActive'],
+        attributes: ['id', 'names', 'role_id', 'is_active'],
         include: [
             { model: db.roles, as: 'role' }
         ]

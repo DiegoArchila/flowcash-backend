@@ -6,19 +6,18 @@ const flowcashServices = {};
 /**
  * Creates a new flowcash record.
  * @param {Object} newFlowcash - The data for the new flowcash record.
- * @param {number} newFlowcash.operation_id - The ID of the related operation.
- * @param {number} newFlowcash.flowcash_type_id - The ID of the flowcash type.
- * @param {number} newFlowcash.value - The value of the flowcash.
- * @param {string} newFlowcash.description - Description of the flowcash.
+ * @param {string} userId - The ID of the user creating the record.
+ * @throws {ValidationError} If the creation fails.
  * @returns {Promise<Object>} The created flowcash record.
  */
-flowcashServices.create = async (newFlowcash) => {
+flowcashServices.create = async (newFlowcash, user) => {
 
-    const response = await db.flowcash.create({
+    await db.flowcash.create({
         operation_id: newFlowcash.operation_id,
         flowcash_type_id: newFlowcash.flowcash_type_id,
         value: newFlowcash.value,
-        description: newFlowcash.description
+        description: newFlowcash.description,
+        user_id: user
     });
 
 };
@@ -82,54 +81,45 @@ flowcashServices.delete = async (id) => {
     }
 };
 
-/**
- * Retrieves paginated flowcash records.
- * If no balance_period exists, it falls back to flowcash_type or epoch start.
+/** 
+ * Retrieves all flowcash records with optional pagination.
  * @param {number} [page] - The page number for pagination.
  * @param {number} [count] - The number of records per page.
  * @returns {Promise<Object>} Paginated flowcash records.
  */
-flowcashServices.getAlls = async (page, count) => {
-    
+flowcashServices.getAllsCurrentPeriod = async (page, count) => {
+
     let results = {};
     let referenceDate;
 
     // 1. We check if there is a balance_period, and get the last datetime_end
-    const balancePeriodFlowcash = await db.balance_period.findAll({
+    const reportBalancePeriodFlowcash = await db.reports_balances_periods.findAll({
         attributes: ['datetime_end'],
         limit: 1,
         order: [['datetime_end', 'DESC']]
     });
 
 
-    referenceDate = balancePeriodFlowcash.length > 0
-        ? balancePeriodFlowcash[0].datetime_end
+    referenceDate = reportBalancePeriodFlowcash.length > 0
+        ? reportBalancePeriodFlowcash[0].datetime_end
         : new Date(0); // Fallback: 1970-01-01
 
-
-    results = await db.flowcash.findAndCountAll({
-        where: {
-            datetime: {
-                [Op.gt]: referenceDate
-            }
-        },
-        order: [['datetime', 'DESC']]
-    });
 
     // 2. If page and count are provided, paginate the results
     if (page && count) {
         results = await db.flowcash.findAndCountAll({
+            attributes: ['id', 'operation_id', 'flowcash_type_id', 'value', 'description', 'datetime'],
             where: {
                 datetime: {
                     [Op.gt]: referenceDate
-                }
+                },
+                balance_period_id: null // Ensure we only get records not yet assigned to a balance period
+
             },
             limit: count,
             offset: (page - 1) * count,
             order: [['datetime', 'DESC']]
         });
-
-        console.log("Results found in flowcashServices.getAlls: ", results);
 
         return {
             currentPage: parseInt(page),
@@ -138,16 +128,6 @@ flowcashServices.getAlls = async (page, count) => {
             data: results.rows
         };
     }
-
-    // 3. If no pagination parameters are provided, return all records after the reference date
-    results = await db.flowcash.findAndCountAll({
-        where: {
-            datetime: {
-                [Op.gt]: referenceDate
-            }
-        },
-        order: [['datetime', 'DESC']]
-    });
 
     return {
         count: results.count,
@@ -165,7 +145,9 @@ flowcashServices.getAlls = async (page, count) => {
  */
 flowcashServices.findById = async (id) => {
 
-    const found = await db.flowcash.findByPk(Number.parseInt(id));
+    const found = await db.flowcash.findByPk(Number.parseInt(id), {
+        attributes: ['id', 'operation_id', 'flowcash_type_id', 'value', 'description', 'datetime']
+    });
 
     if (!found) {
         throw new ValidationError(`the register with ID \"${id}\" it was not found`)

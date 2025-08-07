@@ -35,7 +35,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "operation_type",
-        timestamps: false,
+        timestamps: true,
         
         hooks:{
             beforeCreate: (operation_type) =>{

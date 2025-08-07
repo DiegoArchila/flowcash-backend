@@ -38,7 +38,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model
     const config={
         tableName: "operation",
-        timestamps: false,
+        timestamps: true,
         indexes: [
             {
                 unique: true,

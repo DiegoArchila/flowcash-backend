@@ -1,6 +1,4 @@
 const servicesReports = require("../../services/flowcash/reports");
-const { ValidationError, ForeignKeyConstraintError } = require("sequelize");
-
 
 const controllerReport = {};
 

@@ -35,7 +35,7 @@ module.exports=(sequelize, DataTypes) =>{
     // Set configurations from model or table
     const config={
         tableName: "dnitypes",
-        timestamps: false,
+        timestamps: true,
         hooks:{
             beforeCreate: (dnitypes)=>{
                 if (dnitypes.name) {
